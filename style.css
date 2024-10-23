@@ -16,7 +16,7 @@ body {
 .buttons button {
     padding: 10px 20px;
     margin: 5px;
-    background-color: #4CAF50;
+    background-color: rgb(148, 54, 54);
     color: white;
     border: none;
     border-radius: 5px;
@@ -24,7 +24,7 @@ body {
     font-size: 16px;
 }
 .buttons button:hover {
-    background-color: #45a049;
+    background-color: rgb(184, 70, 70);
 }
 .dataset-section {
     margin: 50px 0;
