@@ -8,6 +8,7 @@
     
     <title>Influenza Dataset</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
 
 </head>
 <body>
@@ -60,8 +61,15 @@
     <div id="dataset1" class="dataset-section">
         <h2>Influenza Rate</h2>
         <p>influenza infection rates statistic onto most major countries.</p>
+        <div class="chart-container">
+            <div id="pie"></div>
+            <div id="Map"></div>
+        </div>
         <script src="influenzaRate.js"></script>
         <script src="InfluenzaRateWorld.js"></script>
+        <br>
+        <br>
+        <br>
         <p>According to all known laws of aviation, there is no way a bee should be able to fly.
             Its wings are too small to get its fat little body off the ground.
             The bee, of course, flies anyway because bees don't care what humans think is impossible.

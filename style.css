@@ -93,3 +93,22 @@ footer {
 .Datasets {
     font-weight: bold;
 }
+.chart-container {
+    display: flex;
+    justify-content: space-between; /* Space between the pie chart and the map */
+}
+
+#pie {
+    width: 45%; /* Adjust the width of the pie chart container */
+    height: 300px; /* Match the height of your chart */
+}
+
+#Map {
+    width: 45%; /* Adjust the width of the map container */
+    height: 400px; /* Match the height of your map */
+}
+
+/* Optional: Center the entire section */
+.dataset-section {
+    text-align: center;
+}
