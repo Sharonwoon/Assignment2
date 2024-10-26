@@ -1,76 +1,104 @@
 function init() {
-    var dataset = [ // Dataset for the stacked graph
-        { apples: 5, oranges: 10, grapes: 22 },
-        { apples: 4, oranges: 12, grapes: 28 },
-        { apples: 2, oranges: 19, grapes: 32 },
-        { apples: 7, oranges: 23, grapes: 35 },
-        { apples: 23, oranges: 17, grapes: 43 }
-    ];
+    var w = 800;
+    var h = 400;
+    var margin = { top: 50, right: 120, bottom: 70, left: 70 };
 
-    var keys = ["apples", "oranges", "grapes"]; // Key each key word and initialize var
-
-    var w = 500;
-    var h = 300;
-    var margin = { top: 20, right: 20, bottom: 30, left: 40 }; // Even padding around the svg
-    
     var xscale = d3.scaleBand()
-                   .domain(d3.range(dataset.length))
-                   .range([margin.left, w - margin.right]) 
+                   .range([margin.left, w - margin.right])
                    .padding(0.1);
 
     var yscale = d3.scaleLinear()
-                   .domain([0, d3.max(dataset, d => d.apples + d.oranges + d.grapes)]) // Y axis value based on max of stacked values
                    .range([h - margin.bottom, margin.top]);
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);  // Color scheme from d3
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
 
-    // Stack the data
-    var series = d3.stack()
-                   .keys(keys)(dataset); // Stack keys and dataset 
-
-    var svg = d3.select("#stacked") // Calling it to body in HTML 
+    var svg = d3.select("#stacked")
                 .append("svg")
                 .attr("width", w)
                 .attr("height", h);
 
-    // Create groups for each series
-    var groups = svg.selectAll("g")
-                    .data(series)
-                    .enter()
-                    .append("g")
-                    .style("fill", function(d) { return color(d.key); }); // Assign color based on the key (for consistency)
+    d3.csv("InfluenzaDeathOnset.csv").then(function(data) {
+        // Convert COUNT to numeric
+        data.forEach(d => d.COUNT = +d.COUNT);
 
-    // Add the rects for each stacked value
-    groups.selectAll("rect")
-          .data(function(d) { return d; })
-          .enter()
-          .append("rect")
-          .attr("x", function(d, i) { return xscale(i); })
-          .attr("y", function(d) { return yscale(d[1]); })
-          .attr("height", function(d) { return yscale(d[0]) - yscale(d[1]); })
-          .attr("width", xscale.bandwidth());
+        // Group data by AGE_GROUP, then by YEAR within each AGE_GROUP
+        var nestedData = d3.group(data, d => d.AGE_GROUP, d => d.YEAR);
 
-    // Add dots for legend
-    svg.selectAll("mydots")
-       .data(keys)
-       .enter()
-       .append("circle")
-       .attr("cx", 20) // Position of dots horizontally
-       .attr("cy", function(d,i){ return 50 + i*25}) // Position of dots vertically
-       .attr("r", 7)
-       .style("fill", function(d){ return color(d)}) // Use the same color scheme based on key
+        // Create an array of unique age groups and years for domain setting
+        var ageGroups = Array.from(nestedData.keys()).sort((a, b) => {
+            if (a === "30+") return 1;
+            if (b === "30+") return -1;
+            return +a - +b;
+        });
+        var years = Array.from(new Set(data.map(d => d.YEAR)));
 
-    // Add labels for the legend
-    svg.selectAll("mylabels")
-       .data(keys)
-       .enter()
-       .append("text")
-       .attr("x", 60)
-       .attr("y", function(d,i){ return 50 + i*25}) // Position of labels vertically
-       .style("fill", function(d){ return color(d)}) // Use the same color scheme based on key
-       .text(function(d){ return d})
-       .attr("text-anchor", "left")
-       .style("alignment-baseline", "middle");
+        // Stack data for each year by age group
+        var stackedData = ageGroups.map(age => {
+            var counts = {};
+            years.forEach(year => {
+                counts[year] = (nestedData.get(age)?.get(year)?.[0]?.COUNT) || 0;
+            });
+            return { age, ...counts };
+        });
+
+        // Define the stack keys (years) and stack layout
+        var series = d3.stack()
+                       .keys(years)
+                       (stackedData);
+
+        xscale.domain(ageGroups);
+        yscale.domain([0, d3.max(series, d => d3.max(d, d => d[1]))]);
+
+        var groups = svg.selectAll("g.series")
+                        .data(series)
+                        .enter()
+                        .append("g")
+                        .attr("class", "series")
+                        .style("fill", (d, i) => color(years[i]));
+
+        groups.selectAll("rect")
+              .data(d => d)
+              .enter()
+              .append("rect")
+              .attr("x", d => xscale(d.data.age))
+              .attr("y", d => yscale(d[1]))
+              .attr("height", d => yscale(d[0]) - yscale(d[1]))
+              .attr("width", xscale.bandwidth());
+
+        // Add x-axis and rotate labels
+        svg.append("g")
+           .attr("transform", `translate(0, ${h - margin.bottom})`)
+           .call(d3.axisBottom(xscale))
+           .selectAll("text")
+           .attr("transform", "rotate(-45)")
+           .style("text-anchor", "end");
+
+        // Add y-axis
+        svg.append("g")
+           .attr("transform", `translate(${margin.left}, 0)`)
+           .call(d3.axisLeft(yscale).ticks(10));
+
+        // Add legend for years
+        svg.selectAll("mydots")
+           .data(years)
+           .enter()
+           .append("circle")
+           .attr("cx", w - 80)
+           .attr("cy", (d, i) => 15 + i * 25)
+           .attr("r", 7)
+           .style("fill", d => color(d));
+
+        svg.selectAll("mylabels")
+           .data(years)
+           .enter()
+           .append("text")
+           .attr("x", w - 70)
+           .attr("y", (d, i) => 15 + i * 25)
+           .style("fill", d => color(d))
+           .text(d => d)
+           .attr("text-anchor", "left")
+           .style("alignment-baseline", "middle");
+    });
 }
 
 window.onload = init;
