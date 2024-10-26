@@ -39,7 +39,12 @@ body {
     font-size: 18px;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
+
     
+}
+.buttons button a {
+    color: inherit; /* Inherits the button's color */
+    text-decoration: none; /* Removes underline */
 }
 
 .buttons button:hover {
