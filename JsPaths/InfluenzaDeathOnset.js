@@ -1,88 +1,76 @@
 function init() {
-    // Load the CSV data dynamically
-    d3.csv("InfluenzaDeathOnset.csv").then(function(data) {
-        
-        // Process the CSV to keep only the rows where Characteristic is 'OnsetToDeath'
-        data = data.filter(d => d.Characteristic === "OnsetToDeath");
+    var dataset = [ // Dataset for the stacked graph
+        { apples: 5, oranges: 10, grapes: 22 },
+        { apples: 4, oranges: 12, grapes: 28 },
+        { apples: 2, oranges: 19, grapes: 32 },
+        { apples: 7, oranges: 23, grapes: 35 },
+        { apples: 23, oranges: 17, grapes: 43 }
+    ];
 
-        // Convert `Count` to a numeric type
-        data.forEach(d => {
-            d.Count = +d.Count;
-        });
+    var keys = ["apples", "oranges", "grapes"]; // Key each key word and initialize var
 
-        // Create a nested structure for stacking
-        const dataset = d3.nest()
-            .key(d => d.Season)
-            .entries(data);
+    var w = 500;
+    var h = 300;
+    var margin = { top: 20, right: 20, bottom: 30, left: 40 }; // Even padding around the svg
+    
+    var xscale = d3.scaleBand()
+                   .domain(d3.range(dataset.length))
+                   .range([margin.left, w - margin.right]) 
+                   .padding(0.1);
 
-        // Extract unique groups and counts for the stack keys
-        const keys = [...new Set(data.map(d => d.Group))];
+    var yscale = d3.scaleLinear()
+                   .domain([0, d3.max(dataset, d => d.apples + d.oranges + d.grapes)]) // Y axis value based on max of stacked values
+                   .range([h - margin.bottom, margin.top]);
 
-        var w = 500;
-        var h = 300;
-        var margin = { top: 20, right: 20, bottom: 30, left: 40 };
-        
-        var xscale = d3.scaleBand()
-                         .domain(dataset.map(d => d.key))
-                         .range([margin.left, w - margin.right])
-                         .padding(0.1);
+    var color = d3.scaleOrdinal(d3.schemeCategory10);  // Color scheme from d3
 
-        var yscale = d3.scaleLinear()
-                         .domain([0, d3.max(data, d => d.Count)])
-                         .range([h - margin.bottom, margin.top]);
+    // Stack the data
+    var series = d3.stack()
+                   .keys(keys)(dataset); // Stack keys and dataset 
 
-        var color = d3.scaleOrdinal(d3.schemeCategory10);
+    var svg = d3.select("#stacked") // Calling it to body in HTML 
+                .append("svg")
+                .attr("width", w)
+                .attr("height", h);
 
-        // Stack the data
-        var series = d3.stack()
-                         .keys(keys)
-                         .value((d, key) => d.values.find(g => g.Group === key)?.Count || 0)
-                         (dataset);
+    // Create groups for each series
+    var groups = svg.selectAll("g")
+                    .data(series)
+                    .enter()
+                    .append("g")
+                    .style("fill", function(d) { return color(d.key); }); // Assign color based on the key (for consistency)
 
-        var svg = d3.select("#stacked")
-                      .append("svg")
-                      .attr("width", w)
-                      .attr("height", h);
+    // Add the rects for each stacked value
+    groups.selectAll("rect")
+          .data(function(d) { return d; })
+          .enter()
+          .append("rect")
+          .attr("x", function(d, i) { return xscale(i); })
+          .attr("y", function(d) { return yscale(d[1]); })
+          .attr("height", function(d) { return yscale(d[0]) - yscale(d[1]); })
+          .attr("width", xscale.bandwidth());
 
-        // Create groups for each series
-        var groups = svg.selectAll("g")
-                          .data(series)
-                          .enter()
-                          .append("g")
-                          .style("fill", d => color(d.key));
+    // Add dots for legend
+    svg.selectAll("mydots")
+       .data(keys)
+       .enter()
+       .append("circle")
+       .attr("cx", 20) // Position of dots horizontally
+       .attr("cy", function(d,i){ return 50 + i*25}) // Position of dots vertically
+       .attr("r", 7)
+       .style("fill", function(d){ return color(d)}) // Use the same color scheme based on key
 
-        // Add the rects for each stacked value
-        groups.selectAll("rect")
-              .data(d => d)
-              .enter()
-              .append("rect")
-              .attr("x", (d, i) => xscale(d.data.key))
-              .attr("y", d => yscale(d[1]))
-              .attr("height", d => yscale(d[0]) - yscale(d[1]))
-              .attr("width", xscale.bandwidth());
-
-        // Add dots for the legend
-        svg.selectAll("mydots")
-           .data(keys)
-           .enter()
-           .append("circle")
-           .attr("cx", 20)
-           .attr("cy", (d,i) => 50 + i*25)
-           .attr("r", 7)
-           .style("fill", d => color(d));
-
-        // Add labels for the legend
-        svg.selectAll("mylabels")
-           .data(keys)
-           .enter()
-           .append("text")
-           .attr("x", 40)
-           .attr("y", (d,i) => 50 + i*25)
-           .style("fill", d => color(d))
-           .text(d => "Group " + d)
-           .attr("text-anchor", "left")
-           .style("alignment-baseline", "middle");
-    });
+    // Add labels for the legend
+    svg.selectAll("mylabels")
+       .data(keys)
+       .enter()
+       .append("text")
+       .attr("x", 60)
+       .attr("y", function(d,i){ return 50 + i*25}) // Position of labels vertically
+       .style("fill", function(d){ return color(d)}) // Use the same color scheme based on key
+       .text(function(d){ return d})
+       .attr("text-anchor", "left")
+       .style("alignment-baseline", "middle");
 }
 
 window.onload = init;
