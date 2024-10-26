@@ -18,34 +18,34 @@ function init() {
         // Extract unique groups and counts for the stack keys
         const keys = [...new Set(data.map(d => d.Group))];
 
-        const w = 500;
-        const h = 300;
-        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        var w = 500;
+        var h = 300;
+        var margin = { top: 20, right: 20, bottom: 30, left: 40 };
         
-        const xscale = d3.scaleBand()
+        var xscale = d3.scaleBand()
                          .domain(dataset.map(d => d.key))
                          .range([margin.left, w - margin.right])
                          .padding(0.1);
 
-        const yscale = d3.scaleLinear()
+        var yscale = d3.scaleLinear()
                          .domain([0, d3.max(data, d => d.Count)])
                          .range([h - margin.bottom, margin.top]);
 
-        const color = d3.scaleOrdinal(d3.schemeCategory10);
+        var color = d3.scaleOrdinal(d3.schemeCategory10);
 
         // Stack the data
-        const series = d3.stack()
+        var series = d3.stack()
                          .keys(keys)
                          .value((d, key) => d.values.find(g => g.Group === key)?.Count || 0)
                          (dataset);
 
-        const svg = d3.select("#stacked")
+        var svg = d3.select("#stacked")
                       .append("svg")
                       .attr("width", w)
                       .attr("height", h);
 
         // Create groups for each series
-        const groups = svg.selectAll("g")
+        var groups = svg.selectAll("g")
                           .data(series)
                           .enter()
                           .append("g")
