@@ -63,7 +63,7 @@ function drawChart() {
        .attr("y", h - 10) // Position below the chart
        .attr("text-anchor", "middle")
        .attr("fill", "black")
-       .text("Age Count"); //age count for X- axis
+       .text("Day onset to death"); //age count for X- axis
 
     // Add y-axis label
     svg.append("text")
