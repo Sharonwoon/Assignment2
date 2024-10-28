@@ -63,7 +63,7 @@ function drawChart() {
        .attr("y", h - 10) // Position below the chart
        .attr("text-anchor", "middle")
        .attr("fill", "black")
-       .text("Years"); //age count for X- axis
+       .text("Age Count"); //age count for X- axis
 
     // Add y-axis label
     svg.append("text")
@@ -73,7 +73,7 @@ function drawChart() {
        .attr("transform", "rotate(-90)") // Rotate the text
        .attr("text-anchor", "middle")
        .attr("fill", "black")
-       .text("Age Count"); //age count for Y- axis
+       .text("Onset Death Count"); //age count for Y- axis
 
     // Add legend for years
     svg.selectAll("mydots")
