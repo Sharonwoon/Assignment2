@@ -100,17 +100,19 @@ footer {
 }
 .chart-container {
     display: flex;
-    justify-content: space-between; /* Space between the pie chart and the map */
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
 }
 
 #pie {
-    width: 45%; /* Adjust the width of the pie chart container */
-    height: 300px; /* Match the height of your chart */
+    margin-right: 20px; /* Adds some space between pie chart and map */
+    flex-shrink: 0; /* Prevents pie chart from resizing */
 }
 
 #Map {
-    width: 45%; /* Adjust the width of the map container */
-    height: 400px; /* Match the height of your map */
+    margin-top: 100px;
+    flex-grow: 1; /* Allows the map to take more space */
 }
 
 /* Optional: Center the entire section */
@@ -129,4 +131,14 @@ footer {
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
  
+}
+.tooltip {
+    position: absolute;
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+    background: lightgray;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    pointer-events: none; /* Allows mouseover events to pass through the tooltip */
 }
