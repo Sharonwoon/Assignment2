@@ -1,135 +1,156 @@
-function init() { 
+function init() {
     // Pie Chart Code
-    var w = 300;
-    var h = 300;
-    var dataset = [
-        { country: "Afghanistan", cases: 137 },
-        { country: "Albania", cases: 55 },
-        { country: "Algeria", cases: 260 },
-        { country: "Argentina", cases: 117 },
-        { country: "Armenia", cases: 17 },
-        { country: "Australia", cases: 1510 },
-        { country: "Austria", cases: 411 },
-        { country: "Azerbaijan", cases: 3 },
-        { country: "Bahrain", cases: 449 },
-        { country: "Bangladesh", cases: 34 },
-        { country: "Barbados", cases: 187 },
-        { country: "Belarus", cases: 42 }
-    ];
-    
-    var outerRadius = w / 2;
-    var innerRadius = 0;
+    const margin = 20;
+    const w = 400;
+    const h = 400;
+    const outerRadius = w / 2 - margin;
+    const innerRadius = 0;
+    const maxDisplay = 12;
+    let displayLimit = maxDisplay;
 
-    var color = d3.scaleOrdinal(d3.schemeCategory10);
+    const colorPie = d3.scaleOrdinal(d3.schemeCategory10);
+    const arc = d3.arc().outerRadius(outerRadius).innerRadius(innerRadius);
+    const arcHover = d3.arc().outerRadius(outerRadius + 10).innerRadius(innerRadius);
+    const pie = d3.pie().value(d => d.cases);
 
-    var arc = d3.arc()
-                .outerRadius(outerRadius)
-                .innerRadius(innerRadius);
-
-    var pie = d3.pie()
-                .value(d => d.cases);
-
-    var svg = d3.select("#pie")
-                .append("svg")
-                .attr("width", w)
-                .attr("height", h)
-                .append("g")
-                .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
-
-    var arcs = svg.selectAll("g.arc")
-                  .data(pie(dataset))
-                  .enter()
+    const svg = d3.select("#pie")
+                  .append("svg")
+                  .attr("width", w + margin * 2)
+                  .attr("height", h + margin * 2)
                   .append("g")
-                  .attr("class", "arc");
+                  .attr("transform", `translate(${outerRadius + margin}, ${outerRadius + margin})`);
 
-    arcs.append("path")
-        .attr("fill", function(d, i) {
-            return color(i);
-        })
-        .attr("d", arc)
-        .style("cursor", "pointer")
-        .style("stroke", "#fff")
-        .style("stroke-width", "2px")
-        .on("mouseover", function(event, d) {
-            d3.select(this)
-              .transition()
-              .duration(200)
-              .attr("d", d3.arc().outerRadius(outerRadius + 10).innerRadius(innerRadius));
-            
-            tooltip.html(d.data.country + ": " + d.data.cases)
-                   .style("opacity", 1)
-                   .style("left", (event.pageX + 10) + "px")
-                   .style("top", (event.pageY - 20) + "px");
-        })
-        .on("mousemove", function(event) {
-            tooltip.style("left", (event.pageX + 10) + "px")
-                   .style("top", (event.pageY - 20) + "px");
-        })
-        .on("mouseout", function() {
-            d3.select(this)
-              .transition()
-              .duration(200)
-              .attr("d", arc);
+    const tooltipPie = d3.select("#pie-tooltip");
 
-            tooltip.style("opacity", 0);
-        });
+    let data = [];
 
-    var tooltip = d3.select("body").append("div")   
-                    .attr("class", "tooltip")              
-                    .style("opacity", 0);
+    function updateChart() {
+        const displayData = data.slice(0, displayLimit);
 
-    // Map Code---------------------------------------------------------------------------------------------------------------------------
-    var w = 800;
-    var h = 750;
+        const arcs = svg.selectAll("g.arc")
+                        .data(pie(displayData), d => d.data.country);
 
-    var projection = d3.geoMercator()
-                        .translate([w / 2, h / 2])
-                        .scale(130);
+        const newArcs = arcs.enter()
+                            .append("g")
+                            .attr("class", "arc");
 
-    var path = d3.geoPath().projection(projection);
+        newArcs.append("path")
+               .attr("fill", (d, i) => colorPie(i))
+               .attr("d", arc)
+               .style("cursor", "pointer")
+               .style("stroke", "#fff")
+               .style("stroke-width", "2px")
+               .on("mouseover", (event, d) => {
+                   d3.select(event.currentTarget)
+                     .transition()
+                     .duration(200)
+                     .attr("d", arcHover);
 
-    var color = d3.scaleQuantize().range(d3.schemePurples[5]);
+                   tooltipPie.html(d.data.country + ": " + d.data.cases)
+                             .style("opacity", 1)
+                             .style("left", (event.pageX + 10) + "px")
+                             .style("top", (event.pageY - 20) + "px");
+               })
+               .on("mousemove", (event) => {
+                   tooltipPie.style("left", (event.pageX + 10) + "px")
+                             .style("top", (event.pageY - 20) + "px");
+               })
+               .on("mouseout", function() {
+                   d3.select(this)
+                     .transition()
+                     .duration(200)
+                     .attr("d", arc);
 
-    var svgMap = d3.select("#Map")
-                   .append("svg")
-                   .attr("width", w)
-                   .attr("height", h)
-                   .style("border", "2px solid #333") // Adds a border directly around the SVG
-                   .style("border-radius", "8px")     // Optional rounded corners for the border
-                   .call(
-                       d3.zoom()
-                         .scaleExtent([1, 8])
-                         .on("zoom", zoomed)
-                   )
-                   .append("g");
+                   tooltipPie.style("opacity", 0);
+               });
 
-    var tooltipMap = d3.select("#tooltip");
+        arcs.exit().remove();
+    }
 
-    d3.json("GeoJsonWorldMap.json").then(function(json) {
-        svgMap.selectAll("path")
-              .data(json.features)
-              .enter()
-              .append("path")
-              .attr("d", path)
-              .style("fill", "#ccc")
-              .on("mouseover", function(event, d) {
-                  tooltipMap.transition()
-                            .duration(200)
-                            .style("opacity", 0.9);
-                  tooltipMap.html(d.properties.LGA_name || "Unknown Region")
-                            .style("left", (event.pageX + 5) + "px")
-                            .style("top", (event.pageY - 28) + "px");
-              })
-              .on("mouseout", function() {
-                  tooltipMap.transition()
-                            .duration(500)
-                            .style("opacity", 0);
-              });
+    d3.csv("InfluenzaRateCountry.csv").then(csvData => {
+        data = csvData.map(d => ({
+            country: d.Country,
+            cases: +d["Influenza positive"]
+        }));
+        updateChart();
     });
 
-    function zoomed(event) {
-        svgMap.attr("transform", event.transform);
-    }
+    d3.select("#addData").on("click", () => {
+        if (displayLimit < data.length) {
+            displayLimit++;
+            updateChart();
+        }
+    });
+
+    d3.select("#removeData").on("click", () => {
+        if (displayLimit > 1) {
+            displayLimit--;
+            updateChart();
+        }
+    });
+
+    // Map Code
+    const mapWidth = 800;
+    const mapHeight = 750;
+    const projection = d3.geoMercator().translate([mapWidth / 2, mapHeight / 2]).scale(130);
+    const path = d3.geoPath().projection(projection);
+    const colorMap = d3.scaleQuantize().range(d3.schemePurples[5]);
+
+    const svgMap = d3.select("#Map")
+                     .append("svg")
+                     .attr("width", mapWidth)
+                     .attr("height", mapHeight)
+                     .call(d3.zoom().scaleExtent([1, 8]).on("zoom", (event) => svgMap.attr("transform", event.transform)))
+                     .append("g");
+
+    const tooltipMap = d3.select("#map-tooltip");
+
+    Promise.all([d3.json("GeoJsonWorldMap.json"), d3.csv("InfluenzaRateCountry.csv")]).then(([json, csvData]) => {
+        const influenzaData = {};
+        csvData.forEach(d => { influenzaData[d.Country_Code] = +d.Influenza_Rate; });
+        colorMap.domain(d3.extent(csvData, d => +d.Influenza_Rate));
+
+        svgMap.selectAll("path")
+            .data(json.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .style("fill", d => {
+                const rate = influenzaData[d.properties.iso_a3];
+                return rate ? colorMap(rate) : "#e0e0e0";
+            })
+            .style("stroke", "#333")
+            .style("stroke-width", "0.5px")
+            .on("mouseover", function(event, d) {
+                const countryName = d.properties.name;
+                const rate = influenzaData[d.properties.iso_a3];
+                
+                d3.select(this)
+                    .style("opacity", 0.8)
+                    .style("stroke-width", "1.5px")
+                    .style("stroke", rate ? "#5a0d87" : "#999");
+
+                tooltipMap.html(`
+                    <strong>${countryName}</strong><br>
+                    Influenza Rate: ${rate !== undefined ? rate : "No Data"}
+                `)
+                .style("opacity", 0.9)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mousemove", (event) => {
+                tooltipMap.style("left", (event.pageX + 10) + "px")
+                          .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .style("opacity", 1)
+                    .style("stroke-width", "0.5px")
+                    .style("stroke", "#333");
+                
+                tooltipMap.style("opacity", 0);
+            });
+    });
 }
 
 window.onload = init;

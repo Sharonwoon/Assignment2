@@ -110,8 +110,13 @@ footer {
     flex: 1;
     display: flex;
     justify-content: center;
+    width: 300px;
+    height: 519px;
+    border: 1px solid black;
+    border-radius: 8px;
+    border: 2px solid #333;
 }
-#map{
+#Map{
     flex: 1;
     display: flex;
     justify-content: center;
@@ -145,10 +150,34 @@ footer {
 .tooltip {
     position: absolute;
     text-align: center;
-    padding: 6px;
-    font-size: 12px;
-    background: lightgray;
-    border: 1px solid #333;
-    border-radius: 4px;
+    width: auto;
+    height: auto;
+    padding: 5px;
+    font: 12px sans-serif;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
     pointer-events: none;
+    opacity: 0;
+}
+#pie-tooltip {
+    /* Optional: Custom styling specific to pie chart tooltip */
+}
+
+#map-tooltip {
+    /* Optional: Custom styling specific to map tooltip */
+}
+
+
+.controls button{
+    padding: 15px 15px;
+    margin: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1); 
 }
