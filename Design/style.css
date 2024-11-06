@@ -160,9 +160,24 @@ footer {
     pointer-events: none;
     opacity: 0;
 }
-#pie-tooltip {
-    /* Optional: Custom styling specific to pie chart tooltip */
+.pie-tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none; /* Ensures tooltip doesn't interfere with hover */
+    transform: translate(-50%, -120%); /* Adjusts position above hovered area */
+    transition: opacity 0.2s ease;
+    opacity: 0;
 }
+
+.pie-chart:hover .pie-tooltip {
+    opacity: 1;
+}
+
 
 #map-tooltip {
     /* Optional: Custom styling specific to map tooltip */
@@ -181,3 +196,4 @@ footer {
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1); 
 }
+

@@ -1,11 +1,11 @@
 function init() {
-    // Pie Chart Code
+    // Pie Chart Setup
     const margin = 20;
     const w = 400;
     const h = 400;
     const outerRadius = w / 2 - margin;
     const innerRadius = 0;
-    const maxDisplay = 12;
+    const maxDisplay = 8;
     let displayLimit = maxDisplay;
 
     const colorPie = d3.scaleOrdinal(d3.schemeCategory10);
@@ -41,28 +41,28 @@ function init() {
                .style("stroke", "#fff")
                .style("stroke-width", "2px")
                .on("mouseover", (event, d) => {
-                   d3.select(event.currentTarget)
-                     .transition()
-                     .duration(200)
-                     .attr("d", arcHover);
+                    d3.select(event.currentTarget)
+                        .transition()
+                        .duration(200)
+                        .attr("d", arcHover);
 
-                   tooltipPie.html(d.data.country + ": " + d.data.cases)
-                             .style("opacity", 1)
-                             .style("left", (event.pageX + 10) + "px")
-                             .style("top", (event.pageY - 20) + "px");
-               })
-               .on("mousemove", (event) => {
-                   tooltipPie.style("left", (event.pageX + 10) + "px")
-                             .style("top", (event.pageY - 20) + "px");
-               })
-               .on("mouseout", function() {
-                   d3.select(this)
-                     .transition()
-                     .duration(200)
-                     .attr("d", arc);
+                    tooltipPie.html(`${d.data.country}: ${d.data.cases}`)
+                        .style("opacity", 1)
+                        .style("left", `${event.pageX + 10}px`)
+                        .style("top", `${event.pageY - 30}px`);  // Adjusted for more precise positioning
+                })
+                .on("mousemove", (event) => {
+                    tooltipPie.style("left", `${event.pageX-200}px`)
+                              .style("top", `${event.pageY-500}px`);  // Adjusted for more precise positioning
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("d", arc);
 
-                   tooltipPie.style("opacity", 0);
-               });
+                    tooltipPie.style("opacity", 0);
+                });
 
         arcs.exit().remove();
     }
@@ -89,7 +89,7 @@ function init() {
         }
     });
 
-    // Map Code
+    // Map Setup
     const mapWidth = 800;
     const mapHeight = 750;
     const projection = d3.geoMercator().translate([mapWidth / 2, mapHeight / 2]).scale(130);
@@ -134,20 +134,20 @@ function init() {
                     <strong>${countryName}</strong><br>
                     Influenza Rate: ${rate !== undefined ? rate : "No Data"}
                 `)
-                .style("opacity", 0.9)
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 10) + "px");
+                .style("opacity", 1)
+                .style("left", `${event.pageX + 10}px`)
+                .style("top", `${event.pageY - 30}px`);  // Adjusted for more precise positioning
             })
             .on("mousemove", (event) => {
-                tooltipMap.style("left", (event.pageX + 10) + "px")
-                          .style("top", (event.pageY - 10) + "px");
+                tooltipMap.style("left", `${event.pageX -200}px`)
+                          .style("top", `${event.pageY - 500}px`);  // Adjusted for more precise positioning
             })
             .on("mouseout", function() {
                 d3.select(this)
                     .style("opacity", 1)
                     .style("stroke-width", "0.5px")
                     .style("stroke", "#333");
-                
+
                 tooltipMap.style("opacity", 0);
             });
     });
