@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Data Visualisation Assignment 2">
+    <meta name="keywords" content="HTML, CSS, and JavaScript">
+    <meta name="author" content="Bryan Yap, Woon Xin Ying, and See Zhi Qian">
+    
+    <title>Influenza Dataset</title>
+    <link rel="stylesheet" href="Design/style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+</head>
+<body>
+
+    <div class="image-container">
+        <img src="Design/photo-1674702727317-d29b2788dc4a.jpg" alt="Influenza Overview">
+    </div>
+
+    <h1 class="HeaderText">Influenza Current Times Issue</h1>
+
+    <!-- Buttons to scroll to each dataset -->
+    <div class="buttons">
+        <button><a href="Introductory.html">Introductory</a></button>
+        <button><a href="InfluenzaRate.html">Influenza Rate</a></button>
+        <button><a href="OECDAged65.html">Vaccination Aged 65+</a></button>
+        <button><a href="InfluenzaHospitalization.html">Influenza Hospitalization Rate</a></button> 
+        <button><a href="DeathOnset.html">Death Onset</a></button>
+    </div>
+
+    <!-- Dataset sections -->
+    <div id="dataset1" class="dataset-section">
+        <h2>Influenza Rate</h2>
+        <p>Influenza infection rates statistics in major countries.</p>
+        <div class="controls">
+            <button id="addData">Add Data</button>
+            <button id="removeData">Remove Data</button>
+        </div>
+        <div class="chart-container">
+            <div id="pie"></div>
+            <div id="Map"></div>
+        </div>
+
+        <!-- Separate tooltips for pie chart and map -->
+        <div id="pie-tooltip" class="tooltip"></div>
+        <div id="map-tooltip" class="tooltip"></div>
+
+        <script src="JsPaths/InfluenzaRateWorld.js"></script>
+    </div>
+
+    <footer>
+        COS30045 Data Visualisation Assignment 2 <br>
+        Bryan Yap, Woon Xin Ying, and See Zhi Qian
+    </footer>
+
+</body>
+</html>
