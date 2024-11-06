@@ -1,38 +1,118 @@
-﻿Time Period ,2020,2021,2022,2023
-Australia,63,B   63.4,66.1,63.8
-Austria,,,,
-Belgium,D   62.1,D   57.3,D   56,
-Canada,64.7,,62.1,
-Chile,84.7,73.2,70.2,65.2
-Costa Rica,71.7,66.4,59.3,57.2
-Czechia,23.9,25.4,B   24.6,25.4
-Denmark,52,75,78,
-Estonia,12,23,31.5,
-Finland,53.7,B   62.7,59.5,61
-France,52,59.9,56.8,56.2
-Germany,D   38.8,D   47.3,D   43.3,
-Greece,73.5,65.3,66,
-Hungary,23.6,30.5,22.3,22.4
-Iceland,54.6,60.4,60,52.3
-Ireland,B   58.9,70.5,75.4,72.8
-Israel,68.4,61.2,58.8,51.6
-Italy,54.6,65.3,58.1,56.7
-Japan,66,56,,
-Korea,80.7,80.1,82.1,
-Latvia,9.1,7.7,16.9,
-Lithuania,21.5,26.3,21.5,24.1
-Luxembourg,46.3,44.2,P   43.4,
-Mexico,D   71.7,D   74.7,D   94.1,
-Netherlands,67.9,72.6,68.4,
-New Zealand,73,69,71,B   64.6
-Norway,57,65.5,63.3,64.2
-Poland,,10,8.6,
-Portugal,60.4,66.2,75.8,
-Slovak Republic,D   12.8,D   12.9,D   5.6,
-Slovenia,27,24.5,P   19.1,
-Spain,54.7,67.7,69.5,68.5
-Sweden,52.8,60.4,70,63
-Switzerland,,,37.5,
-Türkiye,,,10.8,
-United Kingdom,E   72.4,E   80.9,E   82.3,
-United States,70.8,72.8,70.6,
+﻿Year,Country,Value
+2020,Australia,63
+2020,Belgium,62.1
+2020,Canada,64.7
+2020,Chile,84.7
+2020,Costa Rica,71.7
+2020,Czechia,23.9
+2020,Denmark,52
+2020,Estonia,12
+2020,Finland,53.7
+2020,France,52
+2020,Germany,38.8
+2020,Greece,73.5
+2020,Hungary,23.6
+2020,Iceland,54.6
+2020,Ireland,58.9
+2020,Israel,68.4
+2020,Italy,54.6
+2020,Japan,66
+2020,Korea,80.7
+2020,Latvia,9.1
+2020,Lithuania,21.5
+2020,Luxembourg,46.3
+2020,Mexico,71.7
+2020,Netherlands,67.9
+2020,New Zealand,73
+2020,Norway,57
+2020,Portugal,60.4
+2020,Slovak Republic,12.8
+2020,Slovenia,27
+2020,Spain,54.7
+2020,Sweden,52.8
+2020,United Kingdom,72.4
+2020,United States,70.8
+2021,Australia,63.4
+2021,Belgium,57.3
+2021,Chile,73.2
+2021,Costa Rica,66.4
+2021,Czechia,25.4
+2021,Denmark,75
+2021,Estonia,23
+2021,Finland,62.7
+2021,France,59.9
+2021,Germany,47.3
+2021,Greece,65.3
+2021,Hungary,30.5
+2021,Iceland,60.4
+2021,Ireland,70.5
+2021,Israel,61.2
+2021,Italy,65.3
+2021,Japan,56
+2021,Korea,80.1
+2021,Latvia,7.7
+2021,Lithuania,26.3
+2021,Luxembourg,44.2
+2021,Mexico,74.7
+2021,Netherlands,72.6
+2021,New Zealand,69
+2021,Norway,65.5
+2021,Poland,10
+2021,Portugal,66.2
+2021,Slovak Republic,12.9
+2021,Slovenia,24.5
+2021,Spain,67.7
+2021,Sweden,60.4
+2021,United Kingdom,80.9
+2021,United States,72.8
+2022,Australia,66.1
+2022,Belgium,56
+2022,Canada,62.1
+2022,Chile,70.2
+2022,Costa Rica,59.3
+2022,Czechia,24.6
+2022,Denmark,78
+2022,Estonia,31.5
+2022,Finland,59.5
+2022,France,56.8
+2022,Germany,43.3
+2022,Greece,66
+2022,Hungary,22.3
+2022,Iceland,60
+2022,Ireland,75.4
+2022,Israel,58.8
+2022,Italy,58.1
+2022,Korea,82.1
+2022,Latvia,16.9
+2022,Lithuania,21.5
+2022,Luxembourg,43.4
+2022,Mexico,94.1
+2022,Netherlands,68.4
+2022,New Zealand,71
+2022,Norway,63.3
+2022,Poland,8.6
+2022,Portugal,75.8
+2022,Slovak Republic,5.6
+2022,Slovenia,19.1
+2022,Spain,69.5
+2022,Sweden,70
+2022,Switzerland,37.5
+2022,Turkey,10.8
+2022,United Kingdom,82.3
+2022,United States,70.6
+2023,Australia,63.8
+2023,Chile,65.2
+2023,Costa Rica,57.2
+2023,Czechia,25.4
+2023,Finland,61
+2023,France,56.2
+2023,Hungary,22.4
+2023,Iceland,52.3
+2023,Ireland,72.8
+2023,Israel,51.6
+2023,Italy,56.7
+2023,Lithuania,24.1
+2023,New Zealand,64.6
+2023,Norway,64.2
+2023,Spain,68.5
+2023,Sweden,63
