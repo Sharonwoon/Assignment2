@@ -1,8 +1,8 @@
 function init() {
     // Pie Chart Setup
     const margin = 20;
-    const w = 400;
-    const h = 400;
+    const w = 300;
+    const h = 300;
     const outerRadius = w / 2 - margin;
     const innerRadius = 0;
     const maxDisplay = 8;

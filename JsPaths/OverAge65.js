@@ -1,71 +1,138 @@
-function init() 
-{
-const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-const width = 600 - margin.left - margin.right;
-const height = 300 - margin.top - margin.bottom;
+var w = 800;
+var h = 400;
+var barPadding = 5;
 
-const svg = d3.select("#chart")
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", `translate(${margin.left},${margin.top})`);
+var margin = { top: 20, right: 20, bottom: 50, left: 50 };
+var innerWidth = w - margin.left - margin.right;
+var innerHeight = h - margin.top - margin.bottom;
 
-const xScale = d3.scaleBand()
-    .range([0, width])
-    .padding(0.1);
+var svg = d3.select("body")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .style("display", "block")
+            .style("margin", "0 auto");
 
-const yScale = d3.scaleLinear()
-    .range([height, 0]);
+var chartGroup = svg.append("g")
+                    .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-svg.append("g")
-    .attr("class", "x-axis")
-    .attr("transform", `translate(0,${height})`);
+var currentYear;
+var dataset = [];
 
-svg.append("g")
-    .attr("class", "y-axis");
+d3.csv("OECD.csv").then(function(data) {
+    data.forEach(d => {
+        d.Year = +d.Year;
+        d.Value = +d.Value;
+    });
 
-function renderChart(data) {
-    xScale.domain(data.map(d => d.country));
-    yScale.domain([0, d3.max(data, d => d.value)]);
+    dataset = data;
+    var years = [...new Set(data.map(d => d.Year))];
+    currentYear = years[0];
 
-    svg.select(".x-axis")
-        .call(d3.axisBottom(xScale));
+    d3.select("#yearSlider")
+        .attr("min", d3.min(years))
+        .attr("max", d3.max(years))
+        .attr("value", currentYear)
+        .on("input", function() {
+            currentYear = +this.value;
+            drawBars(currentYear);
+        });
 
-    svg.select(".y-axis")
-        .call(d3.axisLeft(yScale));
+    d3.select("#SortingAsc").on("click", () => sortBars("asc"));
+    d3.select("#SortingDesc").on("click", () => sortBars("desc"));
 
-    const bars = svg.selectAll(".bar")
-        .data(data);
+    drawBars(currentYear);
+});
+
+function getDataByYear(year) {
+    return dataset.filter(d => d.Year === year);
+}
+
+function drawBars(year, order = "default") {
+    var data = getDataByYear(year);
+
+    if (order === "asc") {
+        data.sort((a, b) => a.Value - b.Value);
+    } else if (order === "desc") {
+        data.sort((a, b) => b.Value - a.Value);
+    }
+
+    var xscale = d3.scaleBand()
+                   .domain(data.map(d => d.Country))
+                   .range([0, innerWidth])
+                   .paddingInner(0.05);
+
+    var yscale = d3.scaleLinear()
+                   .domain([0, 100])
+                   .range([innerHeight, 0]);
+
+    var bars = chartGroup.selectAll("rect")
+                         .data(data, d => d.Country);
 
     bars.enter()
         .append("rect")
-        .attr("class", "bar")
         .merge(bars)
-        .attr("x", d => xScale(d.country))
-        .attr("width", xScale.bandwidth())
-        .attr("y", d => yScale(d.value))
-        .attr("height", d => height - yScale(d.value));
+        .attr("x", d => xscale(d.Country))
+        .attr("width", xscale.bandwidth())
+        .attr("fill", "rgb(106,90,205)")
+        .attr("y", innerHeight)
+        .attr("height", 0)
+        .on("mouseover", function(event, d) {
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .attr("fill", "orange");
 
-    bars.exit().remove();
+            var xPosition = parseFloat(d3.select(this).attr("x")) + xscale.bandwidth() / 2;
+            var yPosition = yscale(d.Value) + 20;
+
+            d3.select("#tooltip").remove();
+
+            chartGroup.append("text")
+                .attr("id", "tooltip")
+                .attr("x", xPosition)
+                .attr("y", yPosition)
+                .attr("text-anchor", "middle")
+                .attr("fill", "black")
+                .text(d.Value);
+        })
+        .on("mouseout", function() {
+            d3.select(this)
+                .transition()
+                .duration(500)
+                .attr("fill", "rgb(106,90,205)");
+
+            d3.select("#tooltip").remove();
+        })
+        .transition()
+        .duration(2000)
+        .ease(d3.easeBounce)
+        .attr("y", d => yscale(d.Value))
+        .attr("height", d => innerHeight - yscale(d.Value));
+
+    bars.exit()
+        .transition()
+        .duration(2000)
+        .attr("y", innerHeight)
+        .attr("height", 0)
+        .remove();
+
+    var xAxis = d3.axisBottom(xscale);
+    chartGroup.select(".x-axis")
+              .attr("transform", `translate(0, ${innerHeight})`)
+              .call(xAxis)
+              .selectAll("text")
+              .attr("transform", "rotate(-45)")
+              .style("text-anchor", "end");
+
+    var yAxis = d3.axisLeft(yscale).ticks(10);
+    chartGroup.select(".y-axis")
+              .call(yAxis);
 }
 
-function loadData(year) {
-    d3.csv("OECD.csv").then(data => {
-        const yearData = data
-            .filter(d => +d.year === year)
-            .map(d => ({
-                year: +d.year,
-                country: d.country,
-                value: +d.value
-            }));
-        renderChart(yearData);
-    });
+function sortBars(order) {
+    drawBars(currentYear, order);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadData(2020);
-});
-
-}
-window.onload = init
+chartGroup.append("g").attr("class", "x-axis");
+chartGroup.append("g").attr("class", "y-axis");

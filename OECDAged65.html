@@ -37,15 +37,16 @@
         <p>Influenza Vaccination rate onto most major countries and with pinpoint accuracy of statistic.</p>
         <script src="JsPaths\OverAge65.js"></script>
         
-        <div class="buttons">
-            <button onclick="loadData(2020)">2020</button>
-            <button onclick="loadData(2021)">2021</button>
-            <button onclick="loadData(2022)">2022</button>
-            <button onclick="loadData(2023)">2023</button>
+        <input type="range" id="yearSlider" min="2020" max="2023" step="1">
+        <div class="UpDown">
+        <button id="SortingAsc">SortAsc</button>
+        <button id="SortingDesc">SortDesc</button>
         </div>
-        
-        <div id="chart"></div>
-        
+           
+    </div>
+
+    <div class="chart-container">
+        <svg width="600" height="400"></svg>
     </div>
 
 
