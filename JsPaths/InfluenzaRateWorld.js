@@ -91,7 +91,7 @@ function init() {
 
     // Map Setup
     const mapWidth = 800;
-    const mapHeight = 750;
+    const mapHeight = 600;
     const projection = d3.geoMercator().translate([mapWidth / 2, mapHeight / 2]).scale(130);
     const path = d3.geoPath().projection(projection);
     const colorMap = d3.scaleQuantize().range(d3.schemePurples[5]);
