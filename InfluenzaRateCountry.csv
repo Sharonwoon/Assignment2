@@ -1,5 +1,5 @@
 ﻿Country,Year-week (ISO 8601 calender),Influenza positive
-Afghanistan,2023,137
+Afganistan,2023,137
 Albania,2023,55
 Algeria,2023,260
 Argentina,2023,117
@@ -14,7 +14,7 @@ Belarus,2023,42
 Belgium,2023,39
 Belize,2023,22
 Bhutan,2023,306
-Bolivia (Plurinational State of),2023,2
+Bolivia,2023,2
 Brazil,2023,939
 Brunei Darussalam,2023,106
 Bulgaria,2023,34
@@ -27,7 +27,7 @@ Central African Republic,2023,3
 Chad,2023,0
 Chile,2023,1925
 China,2023,121075
-"China, Hong Kong SAR",2023,2790
+Hong Kong,2023,2790
 Colombia,2023,238
 Costa Rica,2023,0
 Croatia,2023,442
@@ -59,7 +59,7 @@ Hungary,2023,54
 Iceland,2023,246
 India,2023,484
 Indonesia,2023,73
-Iran (Islamic Republic of),2023,10298
+Iran,2023,10298
 Iraq,2023,64
 Ireland,2023,607
 Israel,2023,35
@@ -69,9 +69,9 @@ Japan,2023,3127
 Jordan,2023,356
 Kazakhstan,2023,510
 Kenya,2023,37
-Kosovo (in accordance with UN Security Council resolution 1244 (1999)),2023,11
+Kosovo,2023,11
 Krgyzstan,2023,105
-Lao People's Democratic Republic,2023,301
+Laos,2023,301
 Latvia,2023,55
 Lebanon,2023,219
 Liberia,2023,0
@@ -94,7 +94,7 @@ Mozambique,2023,76
 Myanmar,2023,5
 Namibia,2023,0
 Nepal,2023,328
-Netherlands (Kingdom of the),2023,1580
+Netherlands,2023,1580
 New Zealand,2023,50
 Nicaragua,2023,141
 Niger,2023,31
@@ -111,7 +111,7 @@ Philippines,2023,224
 Poland,2023,213
 Portugal,2023,9088
 Qatar,2023,1220
-Republic of Moldova,2023,59
+Moldova,2023,59
 Romania,2023,312
 Russian Federation,2023,9310
 Rwanda,2023,6
@@ -133,7 +133,7 @@ Sri Lanka,2023,99
 Suriname,2023,1
 Sweden,2023,6036
 Switzerland,2023,3465
-Syrian Arab Republic,2023,76
+Syria,2023,76
 Tajikistan,2023,166
 Thailand,2023,603
 Timor-Leste,2023,19
@@ -142,16 +142,16 @@ Tunisia,2023,18
 Uganda,2023,47
 Ukraine,2023,252
 United Arab Emirates,2023,3170
-"United Kingdom, England",2023,12860
-"United Kingdom, Northen Ireland",2023,674
-"United Kingdom, Scotland",2023,3596
-"United Kingdom, Wales",2023,662
-United Republic of Tanzania,2023,145
+England,2023,12860
+Ireland,2023,674
+Scotland,2023,3596
+Wales,2023,662
+Tanzania,2023,145
 United States of America,2023,125513
 Uruguay,2023,1
 Uzbekistan,2023,86
-Venezuela (Bolivarian Republic of),2023,77
-Viet Nam,2023,272
+Venezuela,2023,77
+Vietnam,2023,272
 Yemen,2023,4
 Zambia,2023,22
 Zimbabwe,2023,137

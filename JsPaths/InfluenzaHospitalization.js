@@ -110,8 +110,8 @@ d3.csv("HospitalizationAge.csv").then(data => {
         .attr("transform", `translate(${padding}, 0)`)
         .call(yAxis)
         .append("text")
-        .attr("x", -padding)
-        .attr("y", padding / 2)
+        .attr("x", -padding +65)
+        .attr("y", padding /2 + 20)
         .attr("fill", "black")
         .attr("text-anchor", "middle")
         .text("Rate per 100,000");
