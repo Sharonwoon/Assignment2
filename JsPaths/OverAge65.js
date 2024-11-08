@@ -1,138 +1,152 @@
-var w = 800;
-var h = 400;
-var barPadding = 5;
+const boxSize = 65; // Size of each box
+const padding = 20; // Padding between boxes
+const legendHeight = 20;
+const legendWidth = 400;
+const titleOffset = 30;
+const subtitleOffset = 25;
+const legendOffset = 80;
+const calendarOffset = 170; // Position calendar lower
 
-var margin = { top: 20, right: 20, bottom: 50, left: 50 };
-var innerWidth = w - margin.left - margin.right;
-var innerHeight = h - margin.top - margin.bottom;
+const width = 1100; // Width of the SVG container
+const height = 600; // Height of the SVG container
+const svg = d3.select("#calendar-chart").attr("width", width).attr("height", height);
+const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
 
-var svg = d3.select("body")
-            .append("svg")
-            .attr("width", w)
-            .attr("height", h)
-            .style("display", "block")
-            .style("margin", "0 auto");
+d3.csv("OECD.csv").then(data => {
+    const maxValue = d3.max(data, d => +d.Value);
+    const colorScale = d3.scaleSequential(d3.interpolateBlues)
+        .domain([0, maxValue]);
 
-var chartGroup = svg.append("g")
-                    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+    // Add chart title
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", titleOffset)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "24px")
+        .attr("font-weight", "bold")
+        .text("Influenza Vaccination Rate for Age 65+");
 
-var currentYear;
-var dataset = [];
+    // Add subtitle
+    svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", titleOffset + subtitleOffset)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "14px")
+        .attr("fill", "#555")
+        .text("Across major countries, showing vaccination coverage by year");
 
-d3.csv("OECD.csv").then(function(data) {
-    data.forEach(d => {
-        d.Year = +d.Year;
-        d.Value = +d.Value;
-    });
+    // Add legend
+    const legendX = (width - legendWidth) / 2;
+    const legendY = legendOffset;
 
-    dataset = data;
-    var years = [...new Set(data.map(d => d.Year))];
-    currentYear = years[0];
+    // Define gradient for legend
+    const legendGradient = svg.append("defs")
+        .append("linearGradient")
+        .attr("id", "legendGradient");
 
-    d3.select("#yearSlider")
-        .attr("min", d3.min(years))
-        .attr("max", d3.max(years))
-        .attr("value", currentYear)
-        .on("input", function() {
-            currentYear = +this.value;
-            drawBars(currentYear);
+    legendGradient.append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", colorScale(0));
+    legendGradient.append("stop")
+        .attr("offset", "50%")
+        .attr("stop-color", colorScale(maxValue / 2));
+    legendGradient.append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", colorScale(maxValue));
+
+    // Draw the legend bar
+    svg.append("rect")
+        .attr("x", legendX)
+        .attr("y", legendY)
+        .attr("width", legendWidth)
+        .attr("height", legendHeight)
+        .style("fill", "url(#legendGradient)");
+
+    // Add legend labels
+    svg.append("text")
+        .attr("x", legendX)
+        .attr("y", legendY + legendHeight + 20)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "12px")
+        .text("0%");
+
+    svg.append("text")
+        .attr("x", legendX + legendWidth / 2)
+        .attr("y", legendY + legendHeight + 20)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "12px")
+        .text((maxValue / 2).toFixed(1) + "%");
+
+    svg.append("text")
+        .attr("x", legendX + legendWidth)
+        .attr("y", legendY + legendHeight + 20)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "12px")
+        .text(maxValue + "%");
+
+    svg.append("text")
+        .attr("x", legendX + legendWidth / 2)
+        .attr("y", legendY - 10)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "14px")
+        .attr("font-weight", "bold")
+        .text("Vaccination Rate (%)");
+
+    // Render country boxes (calendar)
+    function updateChart(year) {
+        svg.selectAll(".country-box").remove(); // Clear previous chart elements
+
+        const yearData = data.filter(d => d.Year == year);
+        const columns = 12; // Number of columns to spread boxes evenly
+        const yPos = calendarOffset; // Lowered position for calendar
+
+        yearData.forEach((d, countryIndex) => {
+            const xPos = (countryIndex % columns) * (boxSize + padding) + 20;
+            const boxYPos = yPos + Math.floor(countryIndex / columns) * (boxSize + padding);
+
+            // Country box with hover effect
+            svg.append("rect")
+                .attr("x", xPos)
+                .attr("y", boxYPos)
+                .attr("width", boxSize)
+                .attr("height", boxSize)
+                .attr("fill", colorScale(+d.Value))
+                .attr("stroke", "#ccc")
+                .attr("rx", 5) // Rounded corners
+                .attr("class", "country-box")
+                .on("mouseover", function(event) {
+                    tooltip.transition().duration(200).style("opacity", 0.9);
+                    tooltip.html(`<strong>${d.Country}</strong><br>Vaccination Rate: ${d.Value}%`)
+                        .style("left", (event.pageX + 10) + "px")
+                        .style("top", (event.pageY - 28) + "px")
+                        .style("background-color", "rgba(0, 0, 0, 0.7)")
+                        .style("color", "#fff")
+                        .style("padding", "8px")
+                        .style("border-radius", "5px");
+                })
+                .on("mouseout", function() {
+                    tooltip.transition().duration(500).style("opacity", 0);
+                });
+
+            // Add country names below each box
+            svg.append("text")
+                .attr("x", xPos + boxSize / 2)
+                .attr("y", boxYPos + boxSize + 15)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "11px")
+                .attr("fill", "#333")
+                .attr("class", "country-box")
+                .text(d.Country);
         });
-
-    d3.select("#SortingAsc").on("click", () => sortBars("asc"));
-    d3.select("#SortingDesc").on("click", () => sortBars("desc"));
-
-    drawBars(currentYear);
-});
-
-function getDataByYear(year) {
-    return dataset.filter(d => d.Year === year);
-}
-
-function drawBars(year, order = "default") {
-    var data = getDataByYear(year);
-
-    if (order === "asc") {
-        data.sort((a, b) => a.Value - b.Value);
-    } else if (order === "desc") {
-        data.sort((a, b) => b.Value - a.Value);
     }
 
-    var xscale = d3.scaleBand()
-                   .domain(data.map(d => d.Country))
-                   .range([0, innerWidth])
-                   .paddingInner(0.05);
+    // Initial chart render for the default slider value
+    updateChart(2020);
 
-    var yscale = d3.scaleLinear()
-                   .domain([0, 100])
-                   .range([innerHeight, 0]);
-
-    var bars = chartGroup.selectAll("rect")
-                         .data(data, d => d.Country);
-
-    bars.enter()
-        .append("rect")
-        .merge(bars)
-        .attr("x", d => xscale(d.Country))
-        .attr("width", xscale.bandwidth())
-        .attr("fill", "rgb(106,90,205)")
-        .attr("y", innerHeight)
-        .attr("height", 0)
-        .on("mouseover", function(event, d) {
-            d3.select(this)
-                .transition()
-                .duration(500)
-                .attr("fill", "orange");
-
-            var xPosition = parseFloat(d3.select(this).attr("x")) + xscale.bandwidth() / 2;
-            var yPosition = yscale(d.Value) + 20;
-
-            d3.select("#tooltip").remove();
-
-            chartGroup.append("text")
-                .attr("id", "tooltip")
-                .attr("x", xPosition)
-                .attr("y", yPosition)
-                .attr("text-anchor", "middle")
-                .attr("fill", "black")
-                .text(d.Value);
-        })
-        .on("mouseout", function() {
-            d3.select(this)
-                .transition()
-                .duration(500)
-                .attr("fill", "rgb(106,90,205)");
-
-            d3.select("#tooltip").remove();
-        })
-        .transition()
-        .duration(2000)
-        .ease(d3.easeBounce)
-        .attr("y", d => yscale(d.Value))
-        .attr("height", d => innerHeight - yscale(d.Value));
-
-    bars.exit()
-        .transition()
-        .duration(2000)
-        .attr("y", innerHeight)
-        .attr("height", 0)
-        .remove();
-
-    var xAxis = d3.axisBottom(xscale);
-    chartGroup.select(".x-axis")
-              .attr("transform", `translate(0, ${innerHeight})`)
-              .call(xAxis)
-              .selectAll("text")
-              .attr("transform", "rotate(-45)")
-              .style("text-anchor", "end");
-
-    var yAxis = d3.axisLeft(yscale).ticks(10);
-    chartGroup.select(".y-axis")
-              .call(yAxis);
-}
-
-function sortBars(order) {
-    drawBars(currentYear, order);
-}
-
-chartGroup.append("g").attr("class", "x-axis");
-chartGroup.append("g").attr("class", "y-axis");
+    // Update the chart when the slider changes
+    d3.select("#yearSlider").on("input", function() {
+        const selectedYear = +this.value;
+        d3.select("#selectedYear").text(selectedYear); // Update displayed year
+        updateChart(selectedYear);
+    });
+});

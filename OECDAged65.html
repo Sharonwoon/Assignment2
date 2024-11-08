@@ -1,68 +1,68 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="description" content="Data Visualisation Assignment 2">
-    <meta name="Keyword" content="HTML,CSS and Javascript">
-    <meta name="author" content="Bryan Yap, Woon Xin Ying and See Zhi Qian">
-    
-    <title>Influenza Dataset</title>
-    <link rel="stylesheet" href="Design\style.css">
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-
-</head>
-<body>
-
-    <div class="image-container">
-        <img src="Design\photo-1674702727317-d29b2788dc4a.jpg" alt="Influenza Overview">
-    </div>
-
-    <h1 class="HeaderText">Influenza Current Times Issue</h1>
-
-    <!-- Buttons to scroll to each dataset -->
-    <div class="buttons">
-        <button><a href="Introductory.html">Introductory</a></button>
-        <button><a href="InfluenzaRate.html">Influenza Rate</a></button>
-        <button><a href="OECDAged65.html">Vaccination Aged 65+</a></button>
-        <button><a href="InfluenzaHospitalization.html">Influenza Hospitalization Rate</a></button> 
-        <button><a href="DeathOnset.html">Death Onset</a></button>
-    </div>
-
-    
-
-    <!-- Dataset sections -->
-
-    <div id="dataset2" class="dataset-section">
-        <h2>Influenza Mortality Rate for over aged 65</h2>
-        <p>Influenza Vaccination rate onto most major countries and with pinpoint accuracy of statistic.</p>
-        <p>The Silder Bar Represent 4 years from 2020 till 2023</p>
-        <script src="JsPaths\OverAge65.js"></script>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="description" content="Data Visualisation Assignment 2">
+        <meta name="Keyword" content="HTML,CSS and Javascript">
+        <meta name="author" content="Bryan Yap, Woon Xin Ying and See Zhi Qian">
         
-        <input type="range" id="yearSlider" min="2020" max="2023" step="1">
-        <div class="UpDown">
-        <button id="SortingAsc">SortAsc</button>
-        <button id="SortingDesc">SortDesc</button>
+        <title>Influenza Dataset</title>
+        <link rel="stylesheet" href="Design\style.css">
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+
+    </head>
+    <body>
+
+        <div class="image-container">
+            <img src="Design\photo-1674702727317-d29b2788dc4a.jpg" alt="Influenza Overview">
         </div>
-           
-    </div>
 
-    <div class="chart-container">
-        <svg width="600" height="400"></svg>
-    </div>
+        <h1 class="HeaderText">Influenza Current Times Issue</h1>
+
+        <!-- Buttons to scroll to each dataset -->
+        <div class="buttons">
+            <button><a href="Introductory.html">Introductory</a></button>
+            <button><a href="InfluenzaRate.html">Influenza Rate</a></button>
+            <button><a href="OECDAged65.html">Vaccination Aged 65+</a></button>
+            <button><a href="InfluenzaHospitalization.html">Influenza Hospitalization Rate</a></button> 
+            <button><a href="DeathOnset.html">Death Onset</a></button>
+        </div>
+
+        
+
+        <!-- Dataset sections -->
+
+        <div id="dataset2" class="dataset-section" width="1000px">
+            <h2>Influenza Vaccination Rate for over aged 65+</h2>
+            <p>Influenza Vaccination rate across major countries.</p>
+            <label for="yearSlider">Select Year:</label>
+            <input type="range" id="yearSlider" min="2020" max="2023" step="1" value="2020">
+            <span id="selectedYear">2020</span>
+
+            <div class="Chart-calenderContainer">
+                <svg id="calendar-chart" width="800" height="600"></svg>
+            </div>
+
+            <script src="JsPaths\OverAge65.js"></script>
+            
+        </div>
+    
+        
 
 
 
-    <br>
-    <br>
-    <br>
-    <br>
 
-    <hr>
-    <footer>
-        COS30045 Data Visualisation Assignment 2
         <br>
-        Bryan Yap, Woon Xin Ying and See Zhi Qian
-    </footer>
-    <hr>
+        <br>
+        <br>
+        <br>
 
-</html>
+        <hr>
+        <footer>
+            COS30045 Data Visualisation Assignment 2
+            <br>
+            Bryan Yap, Woon Xin Ying and See Zhi Qian
+        </footer>
+        <hr>
+
+    </html>
