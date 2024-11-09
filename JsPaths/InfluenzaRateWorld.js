@@ -1,28 +1,16 @@
 function init() {
-    // Pie Chart Setup
-    const margin = 20;
-    const w = 300;
-    const h = 300;
-    const outerRadius = w / 2 - margin;
-    const innerRadius = 0;
-    const maxDisplay = 8;
-    let displayLimit = maxDisplay;
+    const margin = 50;
+    const width = 600;
+    const height = 600;
 
-    const colorPie = d3.scaleOrdinal(d3.schemeCategory10);
-    const arc = d3.arc().outerRadius(outerRadius).innerRadius(innerRadius);
-    const arcHover = d3.arc().outerRadius(outerRadius + 10).innerRadius(innerRadius);
-    const pie = d3.pie().value(d => d.cases);
-
-    const svg = d3.select("#pie")
+    const svg = d3.select("#bubble")
                   .append("svg")
-                  .attr("width", w + margin * 2)
-                  .attr("height", h + margin * 2)
-                  .append("g")
-                  .attr("transform", `translate(${outerRadius + margin}, ${outerRadius + margin})`);
+                  .attr("width", width)
+                  .attr("height", height);
 
-    const tooltipPie = d3.select("#pie-tooltip");
+    const tooltipBubble = d3.select("#bubble-tooltip");
 
-    // Directly declared data
+    // Directly declared data (replace with CSV data)
     let data = [
         { country: "Afghanistan", cases: 137 },
         { country: "Albania", cases: 55 },
@@ -128,107 +116,77 @@ function init() {
         { country: "Norway", cases: 5849 },
         { country: "Oman", cases: 657 },
         { country: "Pakistan", cases: 582 },
-        { country: "Panama", cases: 36 },
-        { country: "Papua New Guinea", cases: 16 },
-        { country: "Paraguay", cases: 8 },
-        { country: "Peru", cases: 0 },
-        { country: "Philippines", cases: 224 },
-        { country: "Poland", cases: 213 },
-        { country: "Portugal", cases: 9088 },
-        { country: "Qatar", cases: 1220 },
-        { country: "Moldova", cases: 59 },
-        { country: "Romania", cases: 312 },
-        { country: "Russian Federation", cases: 9310 },
-        { country: "Rwanda", cases: 6 },
-        { country: "Saint Lucia", cases: 28 },
-        { country: "Saint Vincent and the Grenadines", cases: 27 },
-        { country: "Saudi Arabia", cases: 2322 },
-        { country: "Senegal", cases: 72 },
-        { country: "Serbia", cases: 41 },
-        { country: "Seychelles", cases: 0 },
-        { country: "Sierra Leone", cases: 0 },
-        { country: "Singapore", cases: 413 },
-        { country: "Slovakia", cases: 122 },
-        { country: "Slovenia", cases: 434 },
-        { country: "Somalia", cases: 28 },
-        { country: "South Africa", cases: 38 },
-        { country: "South Sudan", cases: 15 },
-        { country: "Spain", cases: 9132 },
-        { country: "Sri Lanka", cases: 99 },
-        { country: "Suriname", cases: 1 },
-        { country: "Sweden", cases: 6036 },
-        { country: "Switzerland", cases: 3465 },
-        { country: "Syria", cases: 76 },
-        { country: "Tajikistan", cases: 166 },
-        { country: "Thailand", cases: 603 },
-        { country: "Timor-Leste", cases: 19 },
-        { country: "Togo", cases: 79 },
-        { country: "Tunisia", cases: 18 },
-        { country: "Uganda", cases: 47 },
-        { country: "Ukraine", cases: 252 },
-        { country: "United Arab Emirates", cases: 3170 },
-        { country: "England", cases: 12860 },
-        { country: "Ireland", cases: 674 },
-        { country: "Scotland", cases: 3596 },
-        { country: "Wales", cases: 662 },
-        { country: "Tanzania", cases: 145 },
-        { country: "United States of America", cases: 125513 },
-        { country: "Uruguay", cases: 1 },
-        { country: "Uzbekistan", cases: 86 },
-        { country: "Venezuela", cases: 77 },
-        { country: "Vietnam", cases: 272 },
-        { country: "Yemen", cases: 4 },
-        { country: "Zambia", cases: 22 },
-        { country: "Zimbabwe", cases: 137 }
+        { country: "United States of America", cases:125513 },
+        { country: "United Kingdom", cases:12860 },
+        { country: "Spain", cases:9132 },
+        { country: "Portugal", cases:9088 }
     ];
 
-    function updateChart() {
-        const displayData = data.slice(0, displayLimit);
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-        const arcs = svg.selectAll("g.arc")
-                        .data(pie(displayData), d => d.data.country);
+    // Create scale for bubble size
+    const sizeScale = d3.scaleSqrt()
+                        .domain([0, d3.max(data, d => d.cases)])
+                        .range([10, 70]); // Adjusted size scale for all countries
 
-        const newArcs = arcs.enter()
-                            .append("g")
-                            .attr("class", "arc");
+    // Create force simulation
+    const simulation = d3.forceSimulation(data)
+                         .force("charge", d3.forceManyBody().strength(10))
+                         .force("center", d3.forceCenter(width / 2, height / 2))
+                         .force("collision", d3.forceCollide().radius(d => sizeScale(d.cases) + 5));
 
-        newArcs.append("path")
-               .attr("fill", (d, i) => colorPie(i))
-               .attr("d", arc)
-               .style("cursor", "pointer")
-               .style("stroke", "#fff")
-               .style("stroke-width", "2px")
-               .on("mouseover", (event, d) => {
-                    d3.select(event.currentTarget)
-                        .transition()
-                        .duration(200)
-                        .attr("d", arcHover);
+    // Create circles for the bubble chart
+    const bubbles = svg.selectAll("circle")
+                       .data(data)
+                       .enter()
+                       .append("circle")
+                       .attr("r", d => sizeScale(d.cases))
+                       .style("fill", (d, i) => color(i))
+                       .style("opacity", 0.7)
+                       .style("stroke", "#fff")
+                       .style("stroke-width", "2px")
+                       .on("mouseover", function(event, d) {
+                            d3.select(this)
+                              .transition()
+                              .duration(200)
+                              .style("opacity", 1);
 
-                    tooltipPie.html(`${d.data.country}: ${d.data.cases}`)
-                        .style("opacity", 1)
-                        .style("left", `${event.pageX + 10}px`)
-                        .style("top", `${event.pageY - 30}px`);  // Adjusted for more precise positioning
-                })
-                .on("mousemove", (event) => {
-                    tooltipPie.style("left", `${event.pageX - 200}px`)
-                              .style("top", `${event.pageY - 500}px`);  // Adjusted for more precise positioning
-                })
-                .on("mouseout", function() {
-                    d3.select(this)
-                        .transition()
-                        .duration(200)
-                        .attr("d", arc);
+                            tooltipBubble.html(`${d.country}: ${d.cases} cases`)
+                                         .style("opacity", 1)
+                                         .style("left", `${event.pageX + 10}px`)
+                                         .style("top", `${event.pageY - 30}px`);
+                       })
+                       .on("mouseout", function() {
+                            d3.select(this)
+                              .transition()
+                              .duration(200)
+                              .style("opacity", 0.7);
 
-                    tooltipPie.style("opacity", 0);
-                });
+                            tooltipBubble.style("opacity", 0);
+                       })
+                       // Add click event to highlight corresponding country on the map
+                       .on("click", function(event, d) {
+                            // Highlight country in the map
+                            highlightCountry(d.country);
+                       });
 
-        arcs.exit().remove();
-    }
+    // Add country name and case number
+    // Add country name and case number inside each bubble
+    bubbles.append("text")
+           .attr("class", "bubble-text")
+           .attr("text-anchor", "middle")
+           .attr("dy", ".3em") // Vertically center the text
+           .style("font-size", "10px")
+           .style("fill", "#fff")
+           .text(d => `${d.country}: ${d.cases}`);
 
-    // Call the function to update the chart with the initial data
-    updateChart();
+    // Update the positions of the bubbles according to the force simulation
+    simulation.on("tick", function() {
+        bubbles.attr("cx", function(d) { return d.x; })
+               .attr("cy", function(d) { return d.y; });
+    });
 
-    // Map Setup
+    // Add map setup ------------------------------------------------------------------------------------------------------------------------------
     const mapWidth = 800;
     const mapHeight = 600;
     const projection = d3.geoMercator().translate([mapWidth / 2, mapHeight / 2]).scale(130);
@@ -252,6 +210,7 @@ function init() {
         });
         colorMap.domain(d3.extent(data, d => d.cases));
 
+        // Add the countries to the map and style them
         svgMap.selectAll("path")
             .data(json.features)
             .enter()
@@ -278,11 +237,11 @@ function init() {
                 `)
                 .style("opacity", 1)
                 .style("left", `${event.pageX + 10}px`)
-                .style("top", `${event.pageY - 30}px`);
+                .style("top", `${event.pageY - 30 }px`);
             })
             .on("mousemove", (event) => {
                 tooltipMap.style("left", `${event.pageX - 200}px`)
-                          .style("top", `${event.pageY - 500}px`);
+                          .style("top", `${event.pageY - 100}px`); // Adjusted for better placement
             })
             .on("mouseout", function() {
                 d3.select(this)
@@ -293,6 +252,27 @@ function init() {
                 tooltipMap.style("opacity", 0);
             });
     });
+
+    // Highlight the country on the map when a bubble is clicked
+    function highlightCountry(countryName) {
+        svgMap.selectAll("path")
+            .style("opacity", function(d) {
+                // Check if the country matches the clicked bubble
+                if (d.properties.name === countryName) {
+                    // Highlight the matched country
+                    return 1;
+                }
+                // Make other countries more transparent
+                return 0.2;
+            })
+            .style("stroke", function(d) {
+                // Check if the country matches the clicked bubble
+                if (d.properties.name === countryName) {
+                    return "#ff0000"; // Highlight with a different color
+                }
+                return "#333";
+            });
+    }
 }
 
 window.onload = init;
