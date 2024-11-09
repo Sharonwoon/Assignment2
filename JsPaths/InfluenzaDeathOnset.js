@@ -51,7 +51,7 @@ function drawChart() {
           .attr("height", yscale.bandwidth() * 0.8)
           .on("mouseover", function(event, d) {
               tooltip.transition().duration(200).style("opacity", 0.9);
-              tooltip.html(`Year: ${d.data.year}<br>Count: ${d[1] - d[0]}`)
+              tooltip.html(`Year: 2023 <br>Count: ${d[1] - d[0]}`)
                      .style("left", (event.pageX + 10) + "px")
                      .style("top", (event.pageY - 28) + "px");
           })
