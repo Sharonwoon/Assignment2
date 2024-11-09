@@ -1,6 +1,7 @@
 body { 
     background-color: #f8f9fa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
     margin: 0;
     padding: 0;
     scroll-behavior: smooth;
@@ -214,4 +215,71 @@ footer {
     font-size: 14px;
     transition: background-color 0.3s ease, transform 0.2s ease;
     box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1); 
+}
+
+.tooltip {
+    position: absolute;
+    opacity: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+.legend {
+    font-size: 20px;
+    padding: 5px;
+    
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    
+}
+.legend-color-box {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    
+}
+.chart-containerrrr {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1000px;
+    margin: auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Donut chart container */
+#chart-containnn {
+    flex: 1;
+    max-width: 500px;
+}
+
+/* Legend container styling */
+.legend-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 20px;
+    padding: 10px;
+    max-width: 200px;
+}
+
+/* Legend item */
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.legend-color-box {
+    width: 15px;
+    height: 15px;
+    margin-right: 8px;
 }
