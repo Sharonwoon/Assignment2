@@ -1,5 +1,5 @@
 const boxSize = 65; // Size of each box
-const padding = 20; // Padding between boxes
+const padding = 10; // Padding between boxes
 const legendHeight = 20;
 const legendWidth = 400;
 const titleOffset = 30;
@@ -8,13 +8,25 @@ const legendOffset = 80;
 const calendarOffset = 170; // Position calendar lower
 
 const width = 1100; // Width of the SVG container
-const height = 600; // Height of the SVG container
+const height = 750; // Height of the SVG container
 const svg = d3.select("#calendar-chart").attr("width", width).attr("height", height);
 const tooltip = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
 
+// Create a sidebar to show selected country details
+const sidebar = d3.select("body").append("div")
+    .attr("class", "sidebar")
+    .style("opacity", 0)
+    .style("position", "absolute")
+    .style("right", "10px")
+    .style("top", "100px")
+    .style("padding", "10px")
+    .style("border", "1px solid #ccc")
+    .style("border-radius", "5px")
+    .style("background-color", "#f9f9f9");
+
 d3.csv("OECD.csv").then(data => {
     const maxValue = d3.max(data, d => +d.Value);
-    const colorScale = d3.scaleSequential(d3.interpolateBlues)
+    const colorScale = d3.scaleSequential(d3.interpolateBlues) // Changed to blue color scale
         .domain([0, maxValue]);
 
     // Add chart title
@@ -94,50 +106,51 @@ d3.csv("OECD.csv").then(data => {
 
     // Render country boxes (calendar)
     function updateChart(year) {
-        svg.selectAll(".country-box").remove(); // Clear previous chart elements
-
         const yearData = data.filter(d => d.Year == year);
         const columns = 12; // Number of columns to spread boxes evenly
         const yPos = calendarOffset; // Lowered position for calendar
 
-        yearData.forEach((d, countryIndex) => {
-            const xPos = (countryIndex % columns) * (boxSize + padding) + 20;
-            const boxYPos = yPos + Math.floor(countryIndex / columns) * (boxSize + padding);
+        const boxes = svg.selectAll(".country-box")
+            .data(yearData, d => d.Country);
 
-            // Country box with hover effect
-            svg.append("rect")
-                .attr("x", xPos)
-                .attr("y", boxYPos)
-                .attr("width", boxSize)
-                .attr("height", boxSize)
-                .attr("fill", colorScale(+d.Value))
-                .attr("stroke", "#ccc")
-                .attr("rx", 5) // Rounded corners
-                .attr("class", "country-box")
-                .on("mouseover", function(event) {
-                    tooltip.transition().duration(200).style("opacity", 0.9);
-                    tooltip.html(`<strong>${d.Country}</strong><br>Vaccination Rate: ${d.Value}%`)
-                        .style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 28) + "px")
-                        .style("background-color", "rgba(0, 0, 0, 0.7)")
-                        .style("color", "#fff")
-                        .style("padding", "8px")
-                        .style("border-radius", "5px");
-                })
-                .on("mouseout", function() {
-                    tooltip.transition().duration(500).style("opacity", 0);
-                });
+        boxes.exit().remove(); // Remove old boxes
 
-            // Add country names below each box
-            svg.append("text")
-                .attr("x", xPos + boxSize / 2)
-                .attr("y", boxYPos + boxSize + 15)
-                .attr("text-anchor", "middle")
-                .attr("font-size", "11px")
-                .attr("fill", "#333")
-                .attr("class", "country-box")
-                .text(d.Country);
-        });
+        const enterBoxes = boxes.enter().append("rect")
+            .attr("class", "country-box")
+            .attr("width", boxSize)
+            .attr("height", boxSize)
+            .attr("rx", 5) // Rounded corners
+            .attr("stroke", "#ccc")
+            .attr("x", (d, i) => (i % columns) * (boxSize + padding) + 20)
+            .attr("y", (d, i) => yPos + Math.floor(i / columns) * (boxSize + padding))
+            .on("mouseover", function(event, d) {
+                d3.select(this).attr("stroke", "#000").attr("stroke-width", 2); // Highlight on hover
+                tooltip.transition().duration(200).style("opacity", 0.9);
+                tooltip.html(`<strong>${d.Country}</strong><br>Vaccination Rate: ${d.Value}%`)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px")
+                    .style("background-color", "rgba(0, 0, 0, 0.7)")
+                    .style("color", "#fff")
+                    .style("padding", "8px")
+                    .style("border-radius", "5px");
+            })
+            .on("mouseout", function() {
+                d3.select(this).attr("stroke", "#ccc").attr("stroke-width", 1); // Remove highlight
+                tooltip.transition().duration(500).style("opacity", 0);
+            })
+            .on("click", function(event, d) {
+                // Show detailed info in sidebar on click
+                sidebar.transition().duration(200).style("opacity", 0.9);
+                sidebar.html(`<h3>${d.Country}</h3><p>Vaccination Rate: ${d.Value}%</p><p>Year: ${d.Year}</p>`)
+                    .style("left", `${event.pageX + 20}px`)
+                    .style("top", `${event.pageY - 28}px`);
+            });
+
+        // Merge and update colors with a transition for smooth effect
+        boxes.merge(enterBoxes)
+            .transition()
+            .duration(750)
+            .attr("fill", d => colorScale(+d.Value));
     }
 
     // Initial chart render for the default slider value
