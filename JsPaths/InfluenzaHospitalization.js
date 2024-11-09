@@ -16,13 +16,23 @@ d3.csv('HospitalizationAge.csv').then(data => {
     const ageGroups = ["Children age 0-4", "All ages", "Elderly aged 65+"];
     const colorScale = d3.scaleOrdinal()
         .domain(ageGroups)
-        .range(["#ff7f0e", "#1f77b4", "#2ca02c"]);
+        .range(["#CBDCEB", "#133E87", "#608BC1"]); // Bluish theme colors
 
     const svg = d3.select("#circular-bar-chart")
         .attr("width", width)
         .attr("height", height)
         .append("g")
         .attr("transform", `translate(${width / 2},${height / 2})`);
+
+    // Tooltip
+    const tooltip = d3.select("body").append("div")
+        .style("position", "absolute")
+        .style("visibility", "hidden")
+        .style("background", "#333")
+        .style("color", "#fff")
+        .style("padding", "5px 10px")
+        .style("border-radius", "4px")
+        .style("font-size", "12px");
 
     // Angle and radius scales
     const angleScale = d3.scaleBand()
@@ -34,7 +44,7 @@ d3.csv('HospitalizationAge.csv').then(data => {
         .domain([0, d3.max(data, d => Math.max(d["All ages"], d["Children age 0-4"], d["Elderly aged 65+"]))])
         .range([innerRadius, outerRadius]);
 
-    // Draw radial bars
+    // Draw radial bars with bounce animation
     ageGroups.forEach((ageGroup, i) => {
         svg.append("g")
             .selectAll("path")
@@ -48,11 +58,33 @@ d3.csv('HospitalizationAge.csv').then(data => {
                 .startAngle(d => angleScale(d.Country))
                 .endAngle(d => angleScale(d.Country) + angleScale.bandwidth())
                 .padAngle(0.01)
-                .padRadius(innerRadius));
+                .padRadius(innerRadius))
+            .attr("opacity", 0)
+            .transition()
+            .delay((d, j) => j * 50)
+            .duration(800)
+            .ease(d3.easeBounceOut)
+            .attr("opacity", 1);
+
+        // Hover effect for each path
+        svg.selectAll("path")
+            .on("mouseover", function (event, d) {
+                d3.select(this).attr("opacity", 0.8); // Optional: Highlight the bar on hover
+                tooltip.html(`${ageGroup}<br>Country: ${d.Country}<br>Value: ${d[ageGroup]}`)
+                    .style("visibility", "visible");
+            })
+            .on("mousemove", function (event) {
+                tooltip.style("top", (event.pageY - 10) + "px")
+                    .style("left", (event.pageX + 10) + "px");
+            })
+            .on("mouseout", function () {
+                d3.select(this).attr("opacity", 1); // Reset the opacity
+                tooltip.style("visibility", "hidden");
+            });
     });
 
-    // Improved radial line and label positioning
-    const labelOffset = outerRadius + 20;  // Decrease offset for closer alignment
+    // Radial lines and labels
+    const labelOffset = outerRadius + 20;
 
     svg.append("g")
         .selectAll("line")
@@ -78,7 +110,7 @@ d3.csv('HospitalizationAge.csv').then(data => {
         .attr("stroke", "#333")
         .attr("stroke-width", 0.8);
 
-    // Add improved country labels
+    // Add country labels
     svg.append("g")
         .selectAll("text")
         .data(data)
@@ -97,22 +129,86 @@ d3.csv('HospitalizationAge.csv').then(data => {
         .style("font-size", "9px")
         .style("fill", "#333");
 
-    // Central labels for age groups
+    // Center labels for age groups
     const centerLabels = svg.append("g").attr("class", "center-labels");
     ageGroups.forEach((ageGroup, i) => {
         centerLabels.append("rect")
-            .attr("x", -30)
+            .attr("x", -50)
             .attr("y", (i - 1) * 20 - 6)
             .attr("width", 12)
             .attr("height", 12)
             .attr("fill", colorScale(ageGroup));
 
         centerLabels.append("text")
-            .attr("x", -15)
+            .attr("x", -35)
             .attr("y", (i - 1) * 20)
             .text(ageGroup)
             .style("fill", colorScale(ageGroup))
             .style("font-size", "14px")
             .attr("alignment-baseline", "middle");
     });
+    function sortData(order) {
+    // Sort data based on the selected order
+    data.sort((a, b) => {
+        if (order === 'asc') {
+            return d3.ascending(a["All ages"], b["All ages"]);
+        } else if (order === 'desc') {
+            return d3.descending(a["All ages"], b["All ages"]);
+        }
+    });
+    
+    // Clear previous chart
+    svg.selectAll("*").remove();
+
+    // Redraw the chart with sorted data
+    drawChart();
+}
+
+// Function to draw the chart (place all chart-drawing code inside this function)
+function drawChart() {
+    // Your existing chart code goes here, from setting up scales to drawing bars
+    // Replace `d3.csv` part with this function so the chart updates on sorting
+    ageGroups.forEach((ageGroup, i) => {
+        svg.append("g")
+            .selectAll("path")
+            .data(data)
+            .enter()
+            .append("path")
+            .attr("fill", colorScale(ageGroup))
+            .attr("d", d3.arc()
+                .innerRadius(innerRadius + i * 30)
+                .outerRadius(d => radiusScale(d[ageGroup]))
+                .startAngle(d => angleScale(d.Country))
+                .endAngle(d => angleScale(d.Country) + angleScale.bandwidth())
+                .padAngle(0.01)
+                .padRadius(innerRadius))
+            .attr("opacity", 0)
+            .transition()
+            .delay((d, j) => j * 50)
+            .duration(800)
+            .ease(d3.easeBounceOut)
+            .attr("opacity", 1);
+
+        // Hover effect for each path
+        svg.selectAll("path")
+            .on("mouseover", function (event, d) {
+                d3.select(this).attr("opacity", 0.8);
+                tooltip.html(`${ageGroup}<br>Country: ${d.Country}<br>Value: ${d[ageGroup]}`)
+                    .style("visibility", "visible");
+            })
+            .on("mousemove", function (event) {
+                tooltip.style("top", (event.pageY - 10) + "px")
+                    .style("left", (event.pageX + 10) + "px");
+            })
+            .on("mouseout", function () {
+                d3.select(this).attr("opacity", 1);
+                tooltip.style("visibility", "hidden");
+            });
+    });
+
+    // Radial lines and labels, center labels, and other chart elements go here
+}
+
+// Initial chart drawing
+drawChart();
 });

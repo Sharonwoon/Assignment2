@@ -41,23 +41,39 @@ function drawChart() {
                     .attr("class", "series")
                     .style("fill", (d, i) => color(years[i]));
 
-    groups.selectAll("rect")
-          .data(d => d)
-          .enter()
-          .append("rect")
-          .attr("x", d => xscale(d[0] + 4.7))
-          .attr("y", d => yscale(d.data.age))
-          .attr("width", d => xscale(d[1]) - xscale(d[0]))
-          .attr("height", yscale.bandwidth() * 0.8)
-          .on("mouseover", function(event, d) {
-              tooltip.transition().duration(200).style("opacity", 0.9);
-              tooltip.html(`Year: 2023 <br>Count: ${d[1] - d[0]}`)
-                     .style("left", (event.pageX + 10) + "px")
-                     .style("top", (event.pageY - 28) + "px");
-          })
-          .on("mouseout", function() {
-              tooltip.transition().duration(500).style("opacity", 0);
-          });
+    var rects = groups.selectAll("rect")
+                      .data(d => d);
+
+    // Add entering bars with animation from left
+    rects.enter()
+         .append("rect")
+         .attr("x", d => xscale(0)) // Start from 0 for animation effect
+         .attr("y", d => yscale(d.data.age))
+         .attr("width", 0) // Start width at 0 for animation effect
+         .attr("height", yscale.bandwidth() * 0.8)
+         .on("mouseover", function(event, d) {
+             d3.select(this).transition().duration(200).attr("transform", "scale(1.05)"); // Scaling effect
+             tooltip.transition().duration(200).style("opacity", 0.9);
+             tooltip.html(`Year: ${d.data.year} <br>Count: ${d[1] - d[0]}`)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+         })
+         .on("mouseout", function() {
+             d3.select(this).transition().duration(200).attr("transform", "scale(1)"); // Reset scale
+             tooltip.transition().duration(500).style("opacity", 0);
+         })
+         .transition() // Transition for enter animation
+         .duration(1000)
+         .attr("x", d => xscale(d[0] + 4.7))
+         .attr("width", d => xscale(d[1]) - xscale(d[0]));
+
+    // Update bars with smooth transition on filtering
+    rects.transition()
+         .duration(1000)
+         .attr("x", d => xscale(d[0] + 4.7))
+         .attr("y", d => yscale(d.data.age))
+         .attr("width", d => xscale(d[1]) - xscale(d[0]))
+         .attr("height", yscale.bandwidth() * 0.8);
 
     // Add y-axis
     svg.append("g")
@@ -82,11 +98,11 @@ function drawChart() {
     svg.append("text")
        .attr("class", "y-label")
        .attr("x", margin.left / 2) // Position on the left
-       .attr("y", margin.bottom -70) // Adjust this to align correctly
+       .attr("y", margin.bottom - 70) // Adjust this to align correctly
        .attr("transform", "rotate(-90)") // Rotate the text
        .attr("text-anchor", "middle")
-       .attr("fill", "black");
-       
+       .attr("fill", "black")
+       .text("Age Groups");
 
     // Add legend for years
     svg.selectAll("mydots")
