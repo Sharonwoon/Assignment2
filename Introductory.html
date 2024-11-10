@@ -28,30 +28,78 @@
         <button><a href="DeathOnset.html">Death Onset</a></button>
     </div>
 
+    <div class="circle-container">
+        <div class="circle" id="mainh1-circle" style='--clr:rgb(204, 35, 26);'> <span> Main Focus </span> </div>
+        <div class="circle" id="objective-circle" style='--clr:rgb(217, 151, 27);'> <span> Objective </span> </div>
+        <div class="circle" id="datasets-circle" style='--clr:#f0f;'> <span> Datasets </span> </div>
+    </div>
+    
+
     <div id="Home" class="dataset-section">
         <h2>Introductory to Influenza</h2>
-        <p class="Mainh1">What are our mains focuses in span of Influenza Topic?.</p>
+        <p>What are our mains focuses in span of Influenza Topic? Click on the circle above to view the main focus. <br></p>
+            <p class="Mainh1">Influenza has proven to be a very dangerous disease that can be transmitted to almost anyone. Therefore our goal for this website
+            is to talk about and display each dataset we have collected from very much intensive researches. We hope that the viewers can take this disease as a serious topic since it appear commonly.<br></p>
         <div>
-            Influenza has proven to be a very dangerous disease that can be transmitted to almost anyone. Therefore Our goal for this 
-            is to talk about and display each dataset we have collected from very much intensive researches. <br><br>
-
+            
+            <p class="Objective">
             Our objective in this Assignment is to dive deeper into the nature of influenza by analyzing
             and presenting key datasets gathered through extensive research. These datasets will provide
             an guide for us to work into various aspects of each category, like how fast rates are, vaccination rates are be given out, 
-            and the impact on different demographic groups of ages. <br><br>
+            and the impact on different demographic groups of ages. 
+            Currently we have these five datasets for Influenza. View and see how it works!</p> 
 
                 
-                <p class="Datasets">
-                •Influenza Rate Bar Graph <br><br>
-                •Influenza Rate World Map <br><br>
-                •Influenza vaccination Rate Aged 65+ <br><br>
-                •Influenza Hospitalization Rate for Different Age groups <br><br>
-                •Influenza Death Onset Behavior<br><br>
-                </p>
+            <p class="Datasets">
+                <span>• Influenza Rate Bar Graph</span>
+                <span>• Influenza Rate World Map</span>
+                <span>• Influenza Vaccination Rate Aged 65+</span>
+                <span>• Influenza Hospitalization Rate for Different Age Groups</span>
+                <span>• Influenza Death Onset Behavior</span>
+            </p>
+
+            <script>
+                document.getElementById('mainh1-circle').addEventListener('click', function() {
+                    const mainContent = document.querySelector('.Mainh1');
+                    mainContent.style.display = mainContent.style.display === 'block' ? 'none' : 'block';
+                });
+            
+                document.getElementById('objective-circle').addEventListener('click', function() {
+                    const objectiveContent = document.querySelector('.Objective');
+                    
+                    // Toggle display and re-trigger animation
+                    if (objectiveContent.style.display === 'block') {
+                        objectiveContent.style.display = 'none';
+                        objectiveContent.classList.remove('fadeInUp'); // Reset animation
+                    } else {
+                        objectiveContent.style.display = 'block';
+                        setTimeout(() => {
+                            objectiveContent.classList.add('fadeInUp'); // Trigger animation
+                        }, 10); // Small delay to ensure reflow for animation
+                    }
+                });
+
+                document.getElementById('datasets-circle').addEventListener('click', function() {
+                    const datasetContent = document.querySelector('.Datasets');
+                    datasetContent.style.display = datasetContent.style.display === 'block' ? 'none' : 'block';
+                })
+
+                let circle = document.querySelectorAll('circle')
+                circle.forEach(element => {
+                    circle.onmousemove = (e) => {
+                        let x = e.pageX - circle.offsetLeft
+                        let y = e.pageY - circle.offsetTop
+                        circle.style.setProperty('--x',x + 'px')
+                        circle.style.setProperty('--y',y +'px')
+                    }
+                    
+                });
+
+            </script>
 
             To make readability more acessible to every audience as to what data visualization is all about we will improve the quality of the chart, bar 
             and dataset in order to fully utlize and enchance the reading ability. We will use every concepts are is learnt throughout the Course to offer a real-time 
-            understanding of the pattern in each dataset represented 
+            understanding of the pattern in each dataset represented.
         </div>
     </div>
     
