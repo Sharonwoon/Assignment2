@@ -31,12 +31,26 @@ body {
     font-size: 38px;
     font-weight: bold;
     color: #343a40;
+    opacity: 0; /* Start hidden */
+    animation: fadeIn 3.5s ease forwards; /* Fades in over 1.5 seconds */
 }
+
+/* Keyframes for fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
 
 .buttons {
     text-align: center;
     margin: 20px 0;
 }
+
 
 .buttons button {
     padding: 15px 30px;
@@ -393,6 +407,27 @@ footer {
     }
 }
 
+.info {
+    font-size: 1.5em;
+    color: #333;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 1s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
 .circle-container {
     display: flex;
     justify-content: center;
@@ -409,8 +444,8 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #999;
-    font-size: 1.25em;
+    color: #544343;
+    font-size: 1.1em;
     text-decoration: none;
     cursor: pointer;
     transition: 0.5s;
@@ -457,7 +492,33 @@ footer {
     border-radius: 48px;
 }
 
-.Mainh1, .Datasets,.Objective {
+/* Define animation */
+@keyframes fadeInSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px); /* Start slightly below the original position */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Slide to original position */
+    }
+}
+
+/* Apply the animation to #dataset4 */
+#dataset4 {
+    opacity: 0; /* Start hidden */
+    animation: fadeInSlideUp 1s ease-out forwards; /* Animation settings */
+    animation-delay: 0.5s; /* Delay to start animation */
+}
+
+#dataset4 p {
+    font-size: 1em;
+    color: #5A5A5A;
+    animation-delay: 0.9s; /* Delayed slightly after the heading */
+}
+
+
+.Mainh1, .Datasets,.Objective,.info {
     display: none; /* Hidden initially */
 }
 

@@ -32,6 +32,7 @@
         <div class="circle" id="mainh1-circle" style='--clr:rgb(204, 35, 26);'> <span> Main Focus </span> </div>
         <div class="circle" id="objective-circle" style='--clr:rgb(217, 151, 27);'> <span> Objective </span> </div>
         <div class="circle" id="datasets-circle" style='--clr:#f0f;'> <span> Datasets </span> </div>
+        <div class="circle" id="info-circle" style='--clr:rgb(25, 32, 32);'><span> Info </span> </div> 
     </div>
     
 
@@ -94,20 +95,23 @@
                     }
                     
                 });
+                document.getElementById('info-circle').addEventListener('click', function() {
+                    const mainContent = document.querySelector('.info');
+                    mainContent.style.display = mainContent.style.display === 'block' ? 'none' : 'block';
+                });
+            
 
             </script>
 
-            To make readability more acessible to every audience as to what data visualization is all about we will improve the quality of the chart, bar 
+            <div id='info' class='info'><p>To make readability more acessible to every audience as to what data visualization is all about we will improve the quality of the chart, bar 
             and dataset in order to fully utlize and enchance the reading ability. We will use every concepts are is learnt throughout the Course to offer a real-time 
-            understanding of the pattern in each dataset represented.
+            understanding of the pattern in each dataset represented.</p>
         </div>
     </div>
     
 
 
     
-    <br>
-    <br>
     <br>
     <br>
 
