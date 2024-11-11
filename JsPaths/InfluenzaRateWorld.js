@@ -84,7 +84,6 @@ function init() {
         { country: "Iran", cases: 10298 },
         { country: "Iraq", cases: 64 },
         { country: "Ireland", cases: 607 },
-        { country: "Israel", cases: 35 },
         { country: "Italy", cases: 2841 },
         { country: "Jamaica", cases: 52 },
         { country: "Japan", cases: 3127 },
