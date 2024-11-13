@@ -216,7 +216,7 @@ function init() {
                          .style("pointer-events", "none");
 
     // Load GeoJSON data
-    d3.json("GeoJsonWorldMap.json").then(json => {
+    d3.json("Design/GeoJsonWorldMap.json").then(json => {
         const influenzaData = {};
         data.forEach(d => { 
             influenzaData[d.country] = d.cases; // Match by country name

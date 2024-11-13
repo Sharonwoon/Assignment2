@@ -5,7 +5,7 @@ const innerRadius = 100;
 const outerRadius = Math.min(width, height) / 2 - 50;
 
 // Load CSV data
-d3.csv('HospitalizationAge.csv').then(data => {
+d3.csv('CSV_files/HospitalizationAge.csv').then(data => {
     // Parse and convert numeric fields
     data.forEach(d => {
         d["All ages"] = +d["All ages"];

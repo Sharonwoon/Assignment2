@@ -147,7 +147,7 @@ var tooltip = d3.select("body").append("div")
                 }
                 
                 // Load all data from CSV initially
-                d3.csv("InfluenzaDeathOnset.csv").then(function(data) {
+                d3.csv("CSV_files/InfluenzaDeathOnset.csv").then(function(data) {
                     data.forEach(d => d.COUNT = Math.min(+d.COUNT, maxCount));
                     data = data.filter(d => (parseInt(d.AGE_GROUP) >= 1 && parseInt(d.AGE_GROUP) <= 30) || d.AGE_GROUP === "30+");
                     var nestedData = d3.group(data, d => d.AGE_GROUP, d => d.YEAR);

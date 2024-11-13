@@ -28,7 +28,7 @@ const legendContainer = d3.select("#chart-containnn").append("div")
     .attr("id", "legend-container")
     .attr("class", "legend-container");
 
-d3.csv("OECD.csv").then(data => {
+d3.csv("CSV_files/OECD.csv").then(data => {
     function updateChart(year) {
         const yearData = data.filter(d => d.Year == year);
 
