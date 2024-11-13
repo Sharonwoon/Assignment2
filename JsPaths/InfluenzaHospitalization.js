@@ -1,6 +1,6 @@
 // Chart dimensions
 const width = 1300;
-const height = 700;
+const height = 850;
 const innerRadius = 100;
 const outerRadius = Math.min(width, height) / 2 - 50;
 
@@ -16,7 +16,7 @@ d3.csv('HospitalizationAge.csv').then(data => {
     const ageGroups = ["Children age 0-4", "All ages", "Elderly aged 65+"];
     const colorScale = d3.scaleOrdinal()
         .domain(ageGroups)
-        .range(["#CBDCEB", "#133E87", "#608BC1"]); // Bluish theme colors
+        .range(["#414C6B", "#5BAEB7" , "#1E80C1"]); // Bluish theme colors
 
     const svg = d3.select("#circular-bar-chart")
         .attr("width", width)
@@ -84,7 +84,7 @@ d3.csv('HospitalizationAge.csv').then(data => {
     });
 
     // Radial lines and labels
-    const labelOffset = outerRadius + 20;
+    const labelOffset = outerRadius + 35;
 
     svg.append("g")
         .selectAll("line")
@@ -110,6 +110,7 @@ d3.csv('HospitalizationAge.csv').then(data => {
         .attr("stroke", "#333")
         .attr("stroke-width", 0.8);
 
+
     // Add country labels
     svg.append("g")
         .selectAll("text")
@@ -126,8 +127,14 @@ d3.csv('HospitalizationAge.csv').then(data => {
             return Math.sin(midAngle - Math.PI / 2) * (labelOffset + 5);
         })
         .text(d => d.Country)
-        .style("font-size", "9px")
-        .style("fill", "#333");
+        .style("font-size", "14px") // Increased font size for better readability
+        .style("fill", "#333")
+        .style("font-weight", "bold") // Make text bold for emphasis
+        .style("font-family", "Arial, sans-serif") // Choose a clean, modern font
+        .style("letter-spacing", "0.5px") // Slight spacing for better appearance
+        .style("text-shadow", "0px 0px 3px rgba(0, 0, 0, 0.3)") // Subtle shadow to enhance readability
+        .style("text-transform", "capitalize"); // Capitalize the first letter of each word for consistency
+      
 
     // Center labels for age groups
     const centerLabels = svg.append("g").attr("class", "center-labels");

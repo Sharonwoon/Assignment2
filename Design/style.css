@@ -1,6 +1,6 @@
 body { 
     background-color: #f8f9fa;
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Sentence Case', sans-serif;
     color: #333;
     margin: 0;
     padding: 0;
@@ -431,54 +431,47 @@ footer {
 .circle-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 20px;
     margin-top: 20px;
 }
 
+
 .circle {
-    width: 40px;
-    height: 50px;
-    background-color: rgb(245, 236, 229);
-    border: 2px solid rgb(160, 107, 10); 
-    border-radius: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #544343;
-    font-size: 1.1em;
-    text-decoration: none;
-    cursor: pointer;
-    transition: 0.5s;
     position: relative;
-    overflow: hidden;
-    padding: 20px 60px;
+    padding: 20px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(59, 59, 59);
+    background-color: #f4f6f8;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 1.4;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 3D effect */
+    transition: all 0.2s ease;
+    cursor: pointer;
+   
 }
 
 
 .circle:hover {
-    color: var(--clr);
-    text-shadow: 0 0 15px var(--clr),
-                 0 0 40px var(--clr);
+    background-color: #e5e6e7;
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
+    transform: translateY(-2px); /* Lift effect */
 }
 
-.circle::before {
-    content: '';
-    position: absolute;
-    top: var(--y);
-    left: var(--x);
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(var(--clr),transparent,transparent);
-    opacity: 0;
-    transition: .5s;
-}
 
 .circle.span {
-    position: relative;
-    z-index: 1;
-    letter-spacing: .2em;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 
+}
+
+.circle:active {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Smaller shadow when pressed */
+    transform: translateY(2px); /* Push down effect */
 }
 
 .circle:hover::before {
