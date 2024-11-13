@@ -1,25 +1,31 @@
 function init() {
-    const margin = 50;
     const width = 600;
     const height = 600;
+    const margin = 50;
+    let expanded = false;
 
+    // Create SVG container with a border for the bubbles
     const svg = d3.select("#bubble")
-                  .append("svg")
-                  .attr("width", width)
-                  .attr("height", height);
+        .append("svg")
+        .attr("width", width + margin * 2)
+        .attr("height", height + margin * 2)
+        .style("border", "2px solid #ddd")
+        .append("g")
+        .attr("transform", `translate(${margin}, ${margin})`);
 
-    // Create tooltip div for displaying details
+    // Tooltip for displaying details
     const tooltip = d3.select("body")
-                      .append("div")
-                      .attr("class", "bubble-tooltip")
-                      .style("position", "absolute")
-                      .style("background", "#333")
-                      .style("color", "#fff")
-                      .style("padding", "5px 10px")
-                      .style("border-radius", "4px")
-                      .style("opacity", 0)
-                      .style("pointer-events", "none");
-    // Directly declared data (replace with CSV data)
+        .append("div")
+        .attr("class", "bubble-tooltip")
+        .style("position", "absolute")
+        .style("background", "#333")
+        .style("color", "#fff")
+        .style("padding", "5px 10px")
+        .style("border-radius", "4px")
+        .style("opacity", 0)
+        .style("pointer-events", "none");
+
+    
     let data = [
         { country: "Afghanistan", cases: 137 },
         { country: "Albania", cases: 55 },
@@ -134,61 +140,85 @@ function init() {
 
     // Scale for bubble size
     const sizeScale = d3.scaleSqrt()
-                        .domain([0, d3.max(data, d => d.cases)])
-                        .range([10, 70]);
+        .domain([0, d3.max(data, d => d.cases)])
+        .range([10, 60]);
 
     // Force simulation
     const simulation = d3.forceSimulation(data)
-                         .force("charge", d3.forceManyBody().strength(10))
-                         .force("center", d3.forceCenter(width / 2, height / 2))
-                         .force("collision", d3.forceCollide().radius(d => sizeScale(d.cases) + 5));
+        .force("charge", d3.forceManyBody().strength(10))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide().radius(d => sizeScale(d.cases) + 5));
 
     // Create circles for each bubble
     const bubbles = svg.selectAll("circle")
-                       .data(data)
-                       .enter()
-                       .append("circle")
-                       .attr("r", d => sizeScale(d.cases))
-                       .style("fill", (d, i) => color(i))
-                       .style("opacity", 0.7)
-                       .style("stroke", "#fff")
-                       .style("stroke-width", "2px")
-                       .on("mouseover", function(event, d) {
-                            d3.select(this)
-                              .transition()
-                              .duration(200)
-                              .style("opacity", 1); // Increase opacity on hover
-
-                            // Show tooltip with country details
-                            tooltip.style("opacity", 1)
-                                   .html(`
-                                       <strong>${d.country}</strong><br>
-                                       Cases: ${d.cases}
-                                   `);
-                       })
-                       .on("mousemove", function(event) {
-                            // Move tooltip with the mouse
-                            tooltip.style("left", `${event.pageX + 10}px`)
-                                   .style("top", `${event.pageY - 30}px`);
-                       })
-                       .on("mouseout", function() {
-                            d3.select(this)
-                              .transition()
-                              .duration(200)
-                              .style("opacity", 0.7); // Reset opacity on mouse out
-
-                            // Hide tooltip
-                            tooltip.style("opacity", 0);
-                       })
-                       .on("click", function(event, d) {
-                            // Highlight corresponding country on the map
-                            highlightCountry(d.country);
-                       });
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("r", d => sizeScale(d.cases))
+        .style("fill", (d, i) => color(i))
+        .style("opacity", 0.7)
+        .style("stroke", "#fff")
+        .style("stroke-width", "2px")
+        .on("mouseover", function(event, d) {
+            d3.select(this).transition().duration(200).style("opacity", 1);
+            tooltip.style("opacity", 1)
+                .html(`<strong>${d.country}</strong><br>Cases: ${d.cases}`);
+            highlightCountry(d.country);
+            showMapStatistics(d.country, d.cases);
+        })
+        .on("mousemove", function(event) {
+            tooltip.style("left", `${event.pageX + 10}px`)
+                .style("top", `${event.pageY - 30}px`);
+        })
+        .on("mouseout", function() {
+            d3.select(this).transition().duration(200).style("opacity", 0.7);
+            tooltip.style("opacity", 0);
+            resetMapHighlight();
+            hideMapStatistics();
+        });
 
     // Update bubble positions based on force simulation
     simulation.on("tick", function() {
         bubbles.attr("cx", d => d.x)
                .attr("cy", d => d.y);
+    });
+
+    // Button functionalities
+
+    // Spin the bubbles
+    d3.select("#spinButton").on("click", function() {
+        svg.transition()
+           .duration(1000)
+           .attr("transform", `translate(${margin}, ${margin}) rotate(${Math.random() * 360}, ${width / 2}, ${height / 2})`);
+    });
+
+    // Randomize colors
+    d3.select("#colorChaosButton").on("click", function() {
+        bubbles.transition()
+               .duration(500)
+               .style("fill", () => color(Math.floor(Math.random() * 10)));
+    });
+
+    // Expand and shrink bubbles
+    d3.select("#expandButton").on("click", function() {
+        expanded = !expanded;
+        bubbles.transition()
+               .duration(500)
+               .attr("r", d => expanded ? sizeScale(d.cases) * 1.5 : sizeScale(d.cases));
+    });
+
+    // Reset all effects
+    d3.select("#resetButton").on("click", function() {
+        svg.transition()
+           .duration(500)
+           .attr("transform", `translate(${margin}, ${margin}) rotate(0)`);
+        bubbles.transition()
+               .duration(500)
+               .attr("r", d => sizeScale(d.cases))
+               .style("fill", (d, i) => color(i));
+        expanded = false;
+        resetMapHighlight();
+        hideMapStatistics();
     });
 
     // Map setup
@@ -202,7 +232,9 @@ function init() {
                      .append("svg")
                      .attr("width", mapWidth)
                      .attr("height", mapHeight)
-                     .call(d3.zoom().scaleExtent([1, 8]).on("zoom", (event) => svgMap.attr("transform", event.transform)))
+                     .call(d3.zoom().scaleExtent([1, 8]).on("zoom", function(event) {
+                         svgMap.attr("transform", event.transform);
+                     }))
                      .append("g");
 
     const tooltipMap = d3.select("body").append("div")
@@ -215,68 +247,79 @@ function init() {
                          .style("opacity", 0)
                          .style("pointer-events", "none");
 
-    // Load GeoJSON data
     d3.json("Design/GeoJsonWorldMap.json").then(json => {
         const influenzaData = {};
         data.forEach(d => { 
-            influenzaData[d.country] = d.cases; // Match by country name
+            influenzaData[d.country] = d.cases;
         });
         colorMap.domain(d3.extent(data, d => d.cases));
 
-        // Add countries to the map and style them
         svgMap.selectAll("path")
             .data(json.features)
             .enter()
             .append("path")
             .attr("d", path)
             .style("fill", d => {
-                const rate = influenzaData[d.properties.name]; // Match by country name
-                return rate ? colorMap(rate) : "#e0e0e0"; // Color based on rate
+                const rate = influenzaData[d.properties.name];
+                return rate ? colorMap(rate) : "#e0e0e0";
             })
             .style("stroke", "#333")
-            .style("stroke-width", "0.5px")
-            .on("mouseover", function(event, d) {
-                const countryName = d.properties.name;
-                const rate = influenzaData[d.properties.name];
-                
-                d3.select(this)
-                    .style("opacity", 0.8)
-                    .style("stroke-width", "1.5px")
-                    .style("stroke", rate ? "#5a0d87" : "#999");
-
-                tooltipMap.html(`
-                    <strong>${countryName}</strong><br>
-                    Influenza Rate: ${rate !== undefined ? rate : "No Data"}
-                `)
-                .style("opacity", 1)
-                .style("left", `${event.pageX + 10}px`)
-                .style("top", `${event.pageY - 30 }px`);
-            })
-            .on("mousemove", (event) => {
-                tooltipMap.style("left", `${event.pageX - 200}px`)
-                          .style("top", `${event.pageY - 100}px`);
-            })
-            .on("mouseout", function() {
-                d3.select(this)
-                    .style("opacity", 1)
-                    .style("stroke-width", "0.5px")
-                    .style("stroke", "#333");
-
-                tooltipMap.style("opacity", 0);
-            });
+            .style("stroke-width", "0.5px");
     });
 
-    // Function to highlight a country on the map
+    const mapText = svgMap.append("text")
+        .attr("id", "mapText")
+        .attr("x", mapWidth / 2)
+        .attr("y", 30)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "16px")
+        .attr("font-weight", "bold")
+        .style("fill", "#333")
+        .style("opacity", 0);
+
+    function showMapStatistics(countryName, cases) {
+        mapText.text(`${countryName}: ${cases} cases`)
+               .transition()
+               .duration(200)
+               .style("opacity", 1);
+    }
+
+    function hideMapStatistics() {
+        mapText.transition()
+               .duration(200)
+               .style("opacity", 0);
+    }
+
     function highlightCountry(countryName) {
         svgMap.selectAll("path")
-            .style("opacity", function(d) {
-                return d.properties.name === countryName ? 1 : 0.2;
-            })
-            .style("stroke", function(d) {
-                return d.properties.name === countryName ? "#ff0000" : "#333";
-            });
+            .style("opacity", d => d.properties.name === countryName ? 1 : 0.2)
+            .style("stroke", d => d.properties.name === countryName ? "#ff0000" : "#333");
     }
+
+    function resetMapHighlight() {
+        svgMap.selectAll("path")
+            .style("opacity", 1)
+            .style("stroke", "#333");
+    }
+
+    // Zoom in and Zoom out buttons
+    const zoom = d3.zoom()
+                   .scaleExtent([1, 8])
+                   .on("zoom", (event) => svgMap.attr("transform", event.transform));
+
+    d3.select("#zoomInButton").on("click", function() {
+        svgMap.transition().call(zoom.scaleBy, 1.2);
+    });
+
+    d3.select("#zoomOutButton").on("click", function() {
+        svgMap.transition().call(zoom.scaleBy, 0.8);
+    });
 }
 
 // Initialize the visualization
 window.onload = init;
+
+
+
+
+

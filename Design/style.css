@@ -519,6 +519,57 @@ footer {
 .Mainh1, .Datasets,.Objective,.info {
     display: none; /* Hidden initially */
 }
+#resetButton{
+    padding: 15px 15px;
+    margin-top: -30px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
+}
+#spinButton{
+    padding: 15px 15px;
+    margin-top: -30px;
+   
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
+}
+#colorChaosButton{
+    padding: 15px 15px;
+    margin-top: -30px;
+   
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
+}
+#expandButton{
+    padding: 15px 15px;
+    margin-top: -30px;
+   
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
+}
 
 
 
