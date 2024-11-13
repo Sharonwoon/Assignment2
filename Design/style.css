@@ -438,26 +438,31 @@ footer {
 
 
 .circle {
-    position: relative;
-    padding: 20px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    color: rgb(59, 59, 59);
-    background-color: #f4f6f8;
+    width: 40px;
+    height: 30px;
+    background-color: #f8f9fa;
+    border: 3px solid #2c2c2c; 
     border-radius: 10px;
-    text-align: center;
-    line-height: 1.4;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* 3D effect */
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #544343;
+    font-size: 1.1em;
+    text-decoration: none;
     cursor: pointer;
+    transition: 0.5s;
+    position: relative;
+    overflow: hidden;
+    padding: 20px 60px;
    
 }
 
 
 .circle:hover {
-    background-color: #e5e6e7;
-    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3); /* Darker shadow on hover */
-    transform: translateY(-2px); /* Lift effect */
+    color: var(--clr);
+    text-shadow: 0 0 15px var(--clr),
+                 0 0 40px var(--clr);
+                 box-shadow: 10px 20px 15px rgba(3, 0, 0, 0.1);
 }
 
 
