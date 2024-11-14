@@ -68,13 +68,7 @@ d3.csv("CSV_files/OECD.csv").then(data => {
 
         // Center summary text
         svg.selectAll("#center-text").remove();
-        svg.append("text")
-            .attr("id", "center-text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "-0.5em")
-            .style("font-size", "20px")
-            .style("font-weight", "bold")
-            .text(`Total Rate: ${totalRate.toFixed(2)}%`);
+        
 
         // Hover effect for each path
         svg.selectAll("path")

@@ -1,5 +1,5 @@
 function init() {
-    const width = 600;
+    const width = 500;
     const height = 600;
     const margin = 50;
     let expanded = false;
